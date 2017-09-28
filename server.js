@@ -80,6 +80,7 @@ app.get('/', function (req, res) {
           break */
         case true: 
           res.sendFile(__dirname + '/public/maintenance.html') 
+          break()
         default:
           res.sendFile(__dirname + '/public/index.html')
           //res.send(doggo)
