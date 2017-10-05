@@ -12,6 +12,11 @@ var bodyParser = require('body-parser')
 var cookieParser = require('cookie-parser')
 var uuid = require('node-uuid')
 
+
+var passportConfig = require('./utilities/passportConfig.js')
+var passport = passportConfig.passport
+var sitedownforwork = true;
+
 app.use(function (req, res, next) {
   console.log(req.originalUrl)
   next()
