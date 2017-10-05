@@ -5,7 +5,7 @@ var postRequestForReact = require('../../utilities/postRequestForReact.js')
 class MentoringComments extends React.Component {
   constructor(props){
     super(props)
-    this.state = {newCommentText:'',newCommentRating:''}
+    this.state = {newCommentText:'',newCommentRating:'', inputerror:''}
     this.changeNewCommentText = this.changeNewCommentText.bind(this)
     this.changeNewCommentRating = this.changeNewCommentRating.bind(this)
     this.submitNewComment = this.submitNewComment.bind(this)
@@ -25,7 +25,7 @@ class MentoringComments extends React.Component {
 			<li className="list-group-item">
 				<div className="form-group">
 				  <label htmlFor="exampleTextarea">New Comment:</label>
-				  <textarea className="form-control" id="exampleTextarea" rows="3" onChange={function(e){this.changeNewCommentText(e.target.value)}.bind(this)} value={this.state.newCommentText}></textarea>
+				  <textarea className={"form-control" + (this.state.inputerror == 1 ? '.has-error' : '')} id="exampleTextarea" rows="3" onChange={function(e){this.changeNewCommentText(e.target.value)}.bind(this)} value={this.state.newCommentText}></textarea>
 				  <br/>
           { this.props.viewer.courseStr.substring(0,1) != 's' ?
 				  (<div className="btn-group" role="group" aria-label="...">
@@ -49,9 +49,18 @@ class MentoringComments extends React.Component {
   }
 
   submitNewComment(){
+    if(this.state.newCommentText == "") {
+      throw new Error("Value is null!")
+      this.resetState()
+        this.setState({
+      inputerror: '1'
+    });
+    }
+    else {
   	var comment = {commentText:this.state.newCommentText,goalMR:this.state.newCommentRating,goalID:this.props.goalID}
   	postRequestForReact('/sendgoalcomment', comment,this.props.updateGoalComments(comment))
   	this.resetState()
+  }
   }
 
   processDate(datestring){
