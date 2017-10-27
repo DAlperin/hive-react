@@ -50,7 +50,7 @@ class MasteryStuTD extends React.Component {
                       <span id="" className="badge badgeM">{this.props.ratingData.mcountM}</span>
                       <span id="" className="badge badgeE">{this.props.ratingData.mcountE}</span>
 
-               </td>
+               </td>)
     }
 }
 
