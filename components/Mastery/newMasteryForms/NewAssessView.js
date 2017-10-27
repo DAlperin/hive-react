@@ -11,7 +11,7 @@ class newAssessView extends React.Component {
 			AssessTitle:"",
 			AssessDesc:"",
 			AssessLink:"",
-			AssessDate:d.toString().substring(0,15),
+			AssessDate:d.tojSON().substring(0,15),
 			LOAlign:"mn"
 		}
 		//this.changeInput = this.changeInput.bind(this)

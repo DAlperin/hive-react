@@ -42,7 +42,11 @@ class MasteryTable extends React.Component {
               filterAssessments={this.props.filterAssessments}
             />)}
               {/*console.log(this.props.parsedMastery.rowsByStu)*/}
-          {Object.keys(this.props.parsedMastery.rowsByStu).slice(0+5*(this.props.vpage),5+5*(this.props.vpage)).map((stuUDID,id1) => (<MasteryStuTR
+          {Object
+            .keys(this.props.parsedMastery.rowsByStu)
+            .slice(0 + 5*(this.props.vpage), 5 + 5*(this.props.vpage))
+            .map(
+              (stuUDID,id1) => (<MasteryStuTR
                                 key={stuUDID}
                                 stuData={this.props.parsedMastery.rowsByStu[stuUDID]}
                                 mRating0s={this.props.parsedMastery.mRating0s[stuUDID]}
@@ -53,7 +57,9 @@ class MasteryTable extends React.Component {
                                 page={this.props.page}
                                 changer={this.props.changeMastery}
                                 filterAssessments={this.props.filterAssessments}
-                              />))}
+                              />)
+            )
+          }
         </tbody>
 	    </table> );
   }
