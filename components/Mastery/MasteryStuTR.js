@@ -34,7 +34,7 @@ class MasteryStuTR extends React.Component {
                             <MasteryStuTD
                                 key={this.state.courseLOIDs[id+4*this.props.page] + '-' + this.props.stuUDID}
                                 mArrKey={!!this.props.stuData[this.state.courseLOIDs[id+4*this.props.page]] ? this.props.stuData[this.state.courseLOIDs[id+4*this.props.page]].mArrKey : -1}
-                                ratingData={!!this.props.stuData[this.state.courseLOIDs[id+4*this.props.page]] ? this.props.stuData[this.state.courseLOIDs[id+4*this.props.page]] : {mcountA:0,mcountE:0,mcountM:0,mcountN:0,mRating0:1}}
+                                ratingData={!!this.props.stuData[this.state.courseLOIDs[id+4*this.props.page]] ? this.props.stuData[this.state.courseLOIDs[id+4*this.props.page]] : {mcountA:0,mcountE:0,mcountM:0,mcountN:0,mRating0:0}}
                                 colOffset={id}
                                 changer={this.props.changer}
                             />)
