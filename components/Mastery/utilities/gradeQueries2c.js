@@ -14,12 +14,44 @@ module.exports = function(courseStr,stuUDID){
     		'sum(MRatings!=\'y\' AND recentrating REGEXP concat(\'m\', LOID, \':1n\')) as mcountN, ' + 
     		'sum(MRatings!=\'y\' AND recentrating REGEXP concat(\'m\', LOID, \':2n\')) as mcountA, ' +
     		'sum(MRatings!=\'y\' AND recentrating REGEXP concat(\'m\', LOID, \':3n\')) as mcountM, ' +
-    		'sum(MRatings!=\'y\' AND recentrating REGEXP concat(\'m\', LOID, \':4n\')) as mcountE ' +
+    		'sum(MRatings!=\'y\' AND recentrating REGEXP concat(\'m\', LOID, \':4n\')) as mcountE, ' +
+    		'group_concat(' +
+    			'if(' +
+    				'MRatings!=\'y\' AND recentrating REGEXP concat(\'m\', LOID, \':1n\'),' +
+    				'concat(' +
+    					'AssessTitle,\' (\',substring(AssessDate,6,5),\'-\',substring(AssessDate,1,4),\')\'),' +
+    				'null' +
+    			') ' +
+    		'separator \' mn \') as assessN, ' +
+    		'group_concat(' +
+    			'if(' +
+    				'MRatings!=\'y\' AND recentrating REGEXP concat(\'m\', LOID, \':2n\'),' +
+    				'concat(' +
+    					'AssessTitle,\' (\',substring(AssessDate,6,5),\'-\',substring(AssessDate,1,4),\')\'),' +
+    				'null' +
+    			') ' +
+    		'separator \' mn \') as assessA, ' +
+    		'group_concat(' +
+    			'if(' +
+    				'MRatings!=\'y\' AND recentrating REGEXP concat(\'m\', LOID, \':3n\'),' +
+    				'concat(' +
+    					'AssessTitle,\' (\',substring(AssessDate,6,5),\'-\',substring(AssessDate,1,4),\')\'),' +
+    				'null' +
+    			') ' +
+    		'separator \' mn \') as assessM, ' +
+    		'group_concat(' +
+    			'if(' +
+    				'MRatings!=\'y\' AND recentrating REGEXP concat(\'m\', LOID, \':4n\'),' +
+    				'concat(' +
+    					'AssessTitle,\' (\',substring(AssessDate,6,5),\'-\',substring(AssessDate,1,4),\')\'),' +
+    				'null' +
+    			') ' +
+    		'separator \' mn \') as assessE ' + 
     		'from ' +
     			'(select * from ' +
     				'(select entryID as LOID from hive1718.LOs where courseStr REGEXP ' + courseStr +') L ' +
     				'left join ' +
-    				'(select courseStr, recentrating, stuUDID, assessID, MRatings, maxID ' +
+    				'(select courseStr, recentrating, stuUDID, assessID, MRatings, maxID, AssessTitle, AssessDate ' +
 		    			'from ' +
 		    				'(select * from ' +
 		    					'(select * from ' +
@@ -117,7 +149,7 @@ module.exports = function(courseStr,stuUDID){
 
     var LOQuery = '' +
     	'select entryID as LOID, ' +
-    		'LOText, ' +
+    		'LOText, LOCode, ' +
     		'concat(courseStr,\'-\',entryID) as courseStrLOID ' +
     	'from hive1718.LOs ' +
     	'where courseStr REGEXP ' + courseStr

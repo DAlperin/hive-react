@@ -12,7 +12,7 @@ function parseMastery(mArr){
     
     var LOs = masteryArr.map((mRecord,id) => {
       columns[mRecord.courseStrLOID] = null
-      masteryArrS[mRecord.courseStrLOID] = {masteryArrSKey:id,LOID:mRecord.LOID,LOText:mRecord.LOText,courseStrLOID:mRecord.courseStrLOID,mcountA:0,mcountE:0,mcountM:0,mcountN:0,mcountU:0,mstudentsA:[],mstudentsE:[],mstudentsM:[],mstudentsN:[],mstudentsU:[]}
+      masteryArrS[mRecord.courseStrLOID] = {masteryArrSKey:id,LOID:mRecord.LOID,LOText:mRecord.LOText,LOCode:mRecord.LOCode,courseStrLOID:mRecord.courseStrLOID,mcountA:0,mcountE:0,mcountM:0,mcountN:0,mcountU:0,mstudentsA:[],mstudentsE:[],mstudentsM:[],mstudentsN:[],mstudentsU:[]}
       return mRecord.courseStrLOID
     })
     var mRating0s = {}
