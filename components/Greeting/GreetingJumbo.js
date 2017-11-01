@@ -15,7 +15,7 @@ class GreetingJumbo extends React.Component {
     
     return( <div id="" className="jumbotron">
               <div><img height="50" src="./public/img/hivelogo.png"/></div>
-              <h1>Hello {name + " " + this.props.viewer.lastName}</h1>
+              <h1 className="jumbo-head-reset">Hello, {name + " " + this.props.viewer.lastName + '.'}</h1>
               {(this.props.viewer.courseStr.substring(0,1) != 's') ? (<p>
               	<a className="btn btn-info btn-lg" href="https://sites.google.com/a/ms442.org/the-hub">
               	<span className="glyphicon glyphicon-briefcase"></span>Visit the Hub

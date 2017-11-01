@@ -122,7 +122,7 @@ class BDRJumbo extends React.Component {
     
     
     return( <div id="" className="jumbotron">
-             <h1><img height="100" src="./public/img/SWIPSGraph.png"/>{(this.props.viewer.courseStr.substring(0,1) != 's' ? null : this.state.swipCount)} SWIPs</h1>
+             <h1 className="jumbo-head-reset" onClick={function(){this._viewOptionSelect('swipsHome')}.bind(this)}><img height="100" src="./public/img/SWIPSGraph.png"/>{(this.props.viewer.courseStr.substring(0,1) != 's' ? null : this.state.swipCount)} SWIPs</h1>
              {this.props.viewer.courseStr.substring(0,1) != 's' ?
               (<div><button type="button" className="btn btn-primary" onClick={function(){this._viewOptionSelect('mybdr')}.bind(this)}>View My BDRs</button>
               <button type="button" className="btn btn-primary" onClick={function(){this._viewOptionSelect('swipTable')}.bind(this)}>View the SWIP Table</button>
@@ -153,6 +153,7 @@ class BDRJumbo extends React.Component {
         this.setState({viewOption:"bdr"})
         break
       default:
+        this.setState({viewOption:"swipsHome"})
         return
     }
   }

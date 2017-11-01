@@ -20,9 +20,9 @@ class MentoringJumbo extends React.Component {
       //let name = this.props.user.title;
     
     return( <div id="" className="jumbotron">
-              <h1>{<span onClick={this.getMentee('')}>Mentoring</span>}{(this.state.activeMentoring.hasOwnProperty('title') ? ': ' + this.state.activeMentoring.title : '' )}</h1>
+              <h1 className="jumbo-head-reset"><img height="100" src="./public/img/MentoringGraph.png"/> {<span onClick={this.getMentee('')}>Mentoring</span>}{(this.state.activeMentoring.hasOwnProperty('title') ? ': ' + this.state.activeMentoring.title : '' )}</h1>
               {(this.props.viewer.courseStr.substring(0,1) != 's' && this.state.activeMentoring == '') ? (<ul className="nav nav-pills">
-            {this.props.mentees.map((mentee,id)=> (<li className={(this.state.activeMentoring.entryID == mentee.entryID) ? 'active' : ''} key={"mentoringnav" + mentee.entryID} onClick={this.getMentee(mentee)}><a href="#" onClick={function(event){event.preventDefault();}}>{mentee.title}</a></li>))}
+            {this.props.mentees.map((mentee,id)=> (<li className={(this.state.activeMentoring.entryID == mentee.entryID) ? 'active' : ''} key={"mentoringnav" + mentee.entryID} onClick={this.getMentee(mentee)}><a href="#" onClick={function(event){event.preventDefault();}}>{mentee.title + ' ' + mentee.lastName}</a></li>))}
         </ul>) : null}
         {(this.state.activeMentoring != '') ? (<MentoringContainer appendGoal={this.appendGoal} goals={this.state.activeGoals} mentee={this.state.activeMentoring} updateGoalComments={this.updateGoalComments} viewer={this.props.viewer}/>) : null}
 	    </div> );

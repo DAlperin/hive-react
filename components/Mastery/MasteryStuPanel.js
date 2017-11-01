@@ -15,7 +15,9 @@ class MasteryStuPanel extends React.Component {
                     </div>
                   </div> */}
                   {console.log(this.props.parsedMastery.rowsByStu[this.props.viewer.entryID])}
-                {Object.keys(this.props.parsedMastery.rowsByStu[this.props.viewer.entryID]).map(function(key,id,arr){
+                {//Object.keys(this.props.parsedMastery.rowsByStu[this.props.viewer.entryID]).map(function(key,id,arr){
+                  this.props.mArrS[1].map(function(LO,id,arr){
+                    var key = this.props.mArrS[2] + '-' + LO.LOID
                   if(!!this.props.parsedMastery.rowsByStu[this.props.viewer.entryID][key]){
                   var mRating = this.props.parsedMastery.rowsByStu[this.props.viewer.entryID][key].mRating0
                   var aRsN = this.props.parsedMastery.rowsByStu[this.props.viewer.entryID][key].mcountN
@@ -77,7 +79,29 @@ class MasteryStuPanel extends React.Component {
                       </div>
                     </div>
                     </li>)} else {
-                    return null
+                      var mRating = 0
+                      return (<li className={"list-group-item light-mback" + mRating} key={key}>
+                      <div className="row">
+                        <div
+                          className={"col-xs-9 mar-bot-0 light-mback" + mRating}>
+                          <div className="panel panel-default">
+                            <div className="panel-body">
+                              {LO.LOCode + ': ' + LO.LOText}
+                            </div>
+                          </div>
+                        </div>
+                        <div
+                          className="col-xs-3">
+                          <div
+                            className={"panel mar-bot-0 stu-rating-badge mback" + mRating}>
+                            <div
+                              className="panel-body">
+                              No Assessments Yet.
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      </li>)
                   }
                 }.bind(this))}
                </ul>
