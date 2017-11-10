@@ -45,13 +45,97 @@ class MasteryJumbo extends React.Component {
   render(){
       //let list = this._getMastery(this.state.parsedMastery);
     
-    return( <div className="jumbotron">
-              <h1><span onClick={this.resetState} className="jumbo-head-reset"><img height="100" src="./public/img/MasteryGraph.png"/> Mastery</span>{((this.state.activeCourse.courseTitle != '')  ? (<span className="home-header" onClick={this.getMasteryForCourse(this.state.activeCourse)}>{": " + this.state.activeCourse.courseTitle}</span>) : "" )}</h1>
-        {(this.state.activeCourse.courseTitle == '') ? (<ul className="nav nav-pills">
-            {Object.keys(this.props.stuCourseQuObj.strObj).map((key,id)=> (<li className={(this.state.activeCourse.courseStr == key) ? 'active' : ''} key={"masterynav" + key} onClick={this.getMasteryForCourse({courseStr:key,courseTitle:this.props.stuCourseQuObj.strObj[key]})}><a href="#" onClick={function(event){event.preventDefault();}}>{this.props.stuCourseQuObj.strObj[key]}</a></li>))}
-        </ul>) : null}
-        {(this.state.mArr.length > 0) ? <MasteryContainer getMasteryForCourse={this.getMasteryForCourse} course={this.state.activeCourse} mArr={this.state.mArr} viewer={this.props.viewer} /> : null}
-	    </div> );
+    return(
+      <div
+        className="jumbotron"
+      >
+        <h1>
+          <span
+            onClick={this.resetState}
+            className="jumbo-head-reset"
+          >
+            <img
+              height="100"
+              src="./public/img/MasteryGraph.png"
+            />
+            Mastery
+          </span>
+          {
+            (
+              (
+                this.state.activeCourse.courseTitle != ''
+              )
+              ? (
+                <span
+                  className="home-header"
+                  onClick={
+                    this.getMasteryForCourse(this.state.activeCourse)
+                  }
+                >
+                  {": " + this.state.activeCourse.courseTitle}
+                </span>
+              )
+              : ""
+            )
+          }
+        </h1>
+        {
+          (
+            this.state.activeCourse.courseTitle == ''
+          )
+          ? (
+            <ul
+              className="nav nav-pills"
+            >
+              {
+                Object.keys(this.props.stuCourseQuObj.strObj)
+                .map(
+                  (key,id)=> (
+                    <li
+                      className={
+                        (this.state.activeCourse.courseStr == key)
+                        ? 'active'
+                        : ''
+                      }
+                      key={"masterynav" + key}
+                      onClick={
+                        this.getMasteryForCourse(
+                          {courseStr:key,courseTitle:this.props.stuCourseQuObj.strObj[key]}
+                        )
+                      }
+                    >
+                      <a
+                        href="#"
+                        onClick={
+                          function(event){
+                            event.preventDefault()
+                          }
+                        }
+                      >
+                        {this.props.stuCourseQuObj.strObj[key]}
+                      </a>
+                    </li>
+                  )
+                )
+              }
+            </ul>
+          )
+          : null
+        }
+        {
+          (this.state.mArr.length > 0)
+          ? (
+            <MasteryContainer
+              getMasteryForCourse={this.getMasteryForCourse}
+              course={this.state.activeCourse}
+              mArr={this.state.mArr}
+              viewer={this.props.viewer}
+            />
+          )
+          : null
+        }
+	    </div>
+    )
   }
 
 }

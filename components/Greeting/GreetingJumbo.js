@@ -13,21 +13,84 @@ class GreetingJumbo extends React.Component {
   render(){
       let name = this.props.viewer.title;
     
-    return( <div id="" className="jumbotron">
-              <div><img height="50" src="./public/img/hivelogo.png"/></div>
-              <h1 className="jumbo-head-reset">Hello, {name + " " + this.props.viewer.lastName + '.'}</h1>
-              {(this.props.viewer.courseStr.substring(0,1) != 's') ? (<p>
-              	<a className="btn btn-info btn-lg" href="https://sites.google.com/a/ms442.org/the-hub">
-              	<span className="glyphicon glyphicon-briefcase"></span>Visit the Hub
+    return(
+      <div
+        id=""
+        className="jumbotron"
+      >
+        <div>
+          <img
+            height="50"
+            src="./public/img/hivelogo.png"
+          />
+        </div>
+        <h1
+          className="jumbo-head-reset"
+        >
+          Hello, {name + " " + this.props.viewer.lastName + '.'}
+        </h1>
+        {
+          (this.props.viewer.courseStr.substring(0,1) != 's')
+          ?
+            (
+              <p>
+              	<a
+                  className="btn btn-info btn-lg"
+                  href="https://sites.google.com/a/ms442.org/the-hub"
+                >
+              	  <span
+                    className="glyphicon glyphicon-briefcase"
+                  >
+                  </span>
+                  Visit the Hub
+                </a>
+                <a 
+                  className="btn btn-info btn-lg"
+                  href="https://docs.google.com/forms/d/e/1FAIpQLSf3LAsfrbyfJLvE55AtkOE4W2BJV4rXnb0CACBMJ4aDIbtHLw/viewform?usp=sf_link"
+                >
+                  <span
+                    className="glyphicon glyphicon-wrench"
+                  >
+                  </span>
+                  Tech Repair
+                </a>
+                <span
+                  className="btn btn-info btn-lg"
+                  onClick={this.viewAttendance.bind(this)}
+                >
+                  <span
+                    className="glyphicon glyphicon-check"
+                  />
+                  Attendance/Uniform
+                </span>
+              </p>
+            )
+          :
+            (
+              <a
+                className="btn btn-info btn-lg"
+                href="https://docs.google.com/forms/d/e/1FAIpQLSf3LAsfrbyfJLvE55AtkOE4W2BJV4rXnb0CACBMJ4aDIbtHLw/viewform?usp=sf_link"
+              >
+                <span
+                  className="glyphicon glyphicon-wrench"
+                >
+                </span>
+                Tech Repair
               </a>
-              <a className="btn btn-info btn-lg" href="https://docs.google.com/forms/d/e/1FAIpQLSf3LAsfrbyfJLvE55AtkOE4W2BJV4rXnb0CACBMJ4aDIbtHLw/viewform?usp=sf_link">
-          <span className="glyphicon glyphicon-wrench"></span> Tech Repair
-        </a>
-        <span className="btn btn-info btn-lg" onClick={this.viewAttendance.bind(this)}><span className="glyphicon glyphicon-check"/> Attendance/Uniform</span>
-              	</p>) : (<a className="btn btn-info btn-lg" href="https://docs.google.com/forms/d/e/1FAIpQLSf3LAsfrbyfJLvE55AtkOE4W2BJV4rXnb0CACBMJ4aDIbtHLw/viewform?usp=sf_link">
-          <span className="glyphicon glyphicon-wrench"></span> Tech Repair
-        </a>)}
-        {!!this.state.attendance ? <LateOOUForm viewer={this.props.viewer} sendLateOOU={this.sendLateOOU.bind(this)} students={this.state.attendance} restoreLateOOU={this.restoreLateOOU.bind(this)} upgradeLateOOU={this.upgradeLateOOU.bind(this)} /> : null}
+            )
+        }
+        {
+          !!this.state.attendance
+          ?
+            <LateOOUForm
+              viewer={this.props.viewer}
+              sendLateOOU={this.sendLateOOU.bind(this)}
+              students={this.state.attendance}
+              restoreLateOOU={this.restoreLateOOU.bind(this)}
+              upgradeLateOOU={this.upgradeLateOOU.bind(this)}
+            />
+          : null
+        }
 	    </div> );
   }
 

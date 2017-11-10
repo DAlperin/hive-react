@@ -7,38 +7,186 @@ class MasteryHeadTR extends React.Component {
         
     }
     render(){
-        return <tr id={"mastery-row-head" } className="mastery-row" >
-        <td><div className="panel panel-default"><div className="panel-body">{"Student"}
-                    <div className="btn-group-vertical" role="group" aria-label="...">
-                      <button type="button" className="btn btn-default" onClick={this.props.upVPage}><span className="glyphicon glyphicon-arrow-up" ></span></button>
-                      <button type="button" className="btn btn-default" onClick={this.props.downVPage}><span className="glyphicon glyphicon-arrow-down" ></span></button>
-                    </div>
-                    <div className="form-inline"><div className="form-group">
-                    <div className="input-group">
-                      <span className="input-group-addon" id="basic-addon3">Name:</span>
-                      <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" onChange={function(e){this.props.filterMasteryStu(e.target.value)}.bind(this)} />
-                    </div>
-                      <select className="form-control" id="selClassNo" onChange={function(e){this.props.filterMasteryClassNo(e.target.value)}.bind(this)}>
-                      <option value={""}>All</option>
-                      {this.props.parsedMastery.classNos.map(item => (<option key={'cNo' + item} value={item}>{item}</option>))}
-                      </select>
-                      </div></div>
+      return (
+        <tr
+          id={"mastery-row-head" }
+          className="mastery-row"
+        >
+          <td>
+            <div
+              className="panel panel-default"
+            >
+              <div
+                className="panel-body"
+              >
+                {"Student"}
+                <div
+                  className="btn-group-vertical"
+                  role="group"
+                  aria-label="..."
+                >
+                  <button
+                    type="button"
+                    className="btn btn-default"
+                    onClick={this.props.upVPage}
+                  >
+                    <span
+                      className="glyphicon glyphicon-arrow-up"
+                    >
+                    </span>
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-default"
+                    onClick={this.props.downVPage}
+                  >
+                    <span
+                      className="glyphicon glyphicon-arrow-down"
+                    >
+                    </span>
+                  </button>
                 </div>
+                <div
+                  className="form-inline"
+                >
+                  <div
+                    className="form-group"
+                  >
+                    <div
+                      className="input-group"
+                    >
+                      <span
+                        className="input-group-addon"
+                        id="basic-addon3"
+                      >
+                        Name:
+                      </span>
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="basic-url"
+                        aria-describedby="basic-addon3"
+                        onChange={
+                          function(e){
+                            this.props.filterMasteryStu(e.target.value)
+                          }.bind(this)
+                        } 
+                      />
+                    </div>
+                    <select
+                      className="form-control"
+                      id="selClassNo"
+                      onChange={
+                        function(e){
+                          this.props.filterMasteryClassNo(e.target.value)
+                        }.bind(this)
+                      }
+                    >
+                      <option
+                        value={""}
+                      >
+                        All
+                      </option>
+                      {
+                        this.props.parsedMastery.classNos.map(
+                          item => (
+                            <option
+                              key={'cNo' + item}
+                              value={item}
+                            >
+                              {item}
+                            </option>))}
+                    </select>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div className="btn-group pager">
-                <button type="button" className="btn btn-default"  onClick={this.props.prevPage}><span className="glyphicon glyphicon-arrow-left" ></span></button>
-                <button type="button" className="btn btn-default"  onClick={this.props.nextPage}><span className="glyphicon glyphicon-arrow-right" ></span></button>
+            <div
+              className="btn-group pager"
+            >
+              <button
+                type="button"
+                className="btn btn-default"
+                onClick={
+                  this.props.prevPage
+                }
+              >
+                <span
+                  className="glyphicon glyphicon-arrow-left"
+                >
+                </span>
+              </button>
+              <button
+                type="button"
+                className="btn btn-default"
+                onClick={this.props.nextPage}
+              >
+                <span
+                  className="glyphicon glyphicon-arrow-right"
+                >
+                </span>
+              </button>
             </div>
-        </td>
-        {[0,1,2,3].map((id,index) => 
-        {
-        if(!!this.props.parsedMastery.masteryArrS[Object.keys(this.props.parsedMastery.masteryArrS)[id+4*this.props.page]]){
-        return <MasteryHeadTD key={this.props.parsedMastery.masteryArrS[Object.keys(this.props.parsedMastery.masteryArrS)[id+4*this.props.page]].courseStrLOID} mRecord={(!!this.props.parsedMastery.masteryArrS[Object.keys(this.props.parsedMastery.masteryArrS)[id+4*this.props.page]]) ? this.props.parsedMastery.masteryArrS[Object.keys(this.props.parsedMastery.masteryArrS)[id+4*this.props.page]] : {mcountN:0, mcountA:0, mcountM:0, mcountE:0}} colOffset={id} filterAssessments={this.props.filterAssessments}/>
-        }
-            else return null
-        })
-        }
+          </td>
+          {
+            [0,1,2,3].map(
+              (id,index) => {
+                if(
+                  !!this.props.parsedMastery
+                    .masteryArrS[
+                      Object.keys(
+                        this.props.parsedMastery.masteryArrS
+                      )[
+                        id+4*this.props.page
+                      ]
+                    ]
+                  ){
+                    return (
+                      <MasteryHeadTD
+                        key={
+                          this.props.parsedMastery
+                            .masteryArrS[
+                              Object.keys(
+                                this.props.parsedMastery.masteryArrS
+                              )[
+                                id+4*this.props.page
+                              ]
+                            ]
+                              .courseStrLOID
+                        } 
+                        mRecord={
+                          (
+                            !!this.props.parsedMastery
+                              .masteryArrS[
+                                Object.keys(
+                                  this.props.parsedMastery.masteryArrS
+                                )[
+                                  id+4*this.props.page
+                                ]
+                              ]
+                          )
+                          ?
+                            this.props.parsedMastery
+                              .masteryArrS[
+                                Object.keys(
+                                  this.props.parsedMastery.masteryArrS
+                                )[
+                                  id+4*this.props.page
+                                ]
+                              ]
+                              : {mcountN:0, mcountA:0, mcountM:0, mcountE:0}
+                        }
+                        colOffset={id}
+                        filterAssessments={this.props.filterAssessments}
+                      />
+                    )
+                  }
+                else return null
+              }
+            )
+          }
         </tr>
+      )
     }
 }
 

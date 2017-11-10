@@ -21,17 +21,45 @@ class AssessmentContainer extends React.Component{
     }
     render(){
       
-        return (<div className="panel panel-default">
-              <div className="panel-heading">
-                <button type="button" className="close">&times;</button>
-                <h4 className="panel-title" id="mypanelLabel">{"Assessment Ratings for "}<strong>{this.state.mArrS[2][0].AssessTitle}</strong></h4>
-              </div>
-              <div className="panel-body">
-                <AssessmentTable parsedAssessment={this.state.parsedAssessment} page={this.state.page} vpage={this.state.vpage} 
-                upVPage={this.upVPage} downVPage={this.downVPage} nextPage={this.nextPage} prevPage={this.prevPage} filterAssessmentStu={this.filterAssessmentStu}
-                changeAssessment={this.changeAssessment} />
-              </div>
-            </div>)
+        return (
+          <div
+            className="panel panel-default"
+          >
+            <div
+              className="panel-heading"
+            >
+              <button
+                type="button"
+                className="close"
+              >
+                &times;
+              </button>
+              <h4
+                className="panel-title"
+                id="mypanelLabel"
+              >
+                {"Assessment Ratings for "}
+                <strong>
+                  {this.state.mArrS[2][0].AssessTitle}
+                </strong>
+              </h4>
+            </div>
+            <div
+              className="panel-body"
+            >
+              <AssessmentTable
+                parsedAssessment={this.state.parsedAssessment}
+                page={this.state.page}
+                vpage={this.state.vpage} 
+                upVPage={this.upVPage}
+                downVPage={this.downVPage} 
+                nextPage={this.nextPage}
+                prevPage={this.prevPage}
+                filterAssessmentStu={this.filterAssessmentStu}
+                changeAssessment={this.changeAssessment}
+              />
+            </div>
+          </div>)
     }
     
   prevPage(){

@@ -2,10 +2,29 @@ import React from 'react';
 
 class BDRPTableCell extends React.Component {
   render(){
-        return <div id="" className={"col-sm-" + this.props.colwidth + " " + (this.props.middlecell ? this.props.middlecell : " ") } >
-                    <strong id="" className="">{this.props.header }</strong><br/>
-                    <span id="" className=""> {this.props.children } </span>
-                  </div>;
+    return (
+      <div
+        id=""
+        className={
+          "col-sm-" + this.props.colwidth + " " + 
+          (this.props.middlecell ? this.props.middlecell : " ")
+        }
+      >
+        <strong
+          id=""
+          className=""
+        >
+          {this.props.header }
+        </strong>
+        <br/>
+        <span
+          id=""
+          className=""
+        >
+          {this.props.children }
+        </span>
+      </div>
+    )
   }
 }
 
@@ -22,26 +41,89 @@ class BDRPanelTable extends React.Component {
   }
 
   render() {
-    return <div id="" className="col-xs-12 bdr-panel-table">
-
-
-                <div id="" className="row bdr-row">
-                  <BDRPTableCell colwidth="4" header="Date/Time"> {this.state.bdrdate} <br/> {this.state.bdrtime} <br/> {"Period " + this.state.incidentPeriod} </BDRPTableCell>
-                  <BDRPTableCell colwidth="4" middlecell="bdr-middle-cell" header="Student Name"> {this.state.studentName }</BDRPTableCell>
-   		  <BDRPTableCell colwidth="4" header="Staff Name"> {this.state.staffName }</BDRPTableCell>
-                </div>
-
-                <div id="" className="row bdr-row">
-                  <BDRPTableCell colwidth="4" header="Location"> {this.state.location} </BDRPTableCell>
-		  <BDRPTableCell colwidth="4" middlecell="bdr-middle-cell" header="Others Involved"> {this.state.othersInvolved} </BDRPTableCell>
-		  <BDRPTableCell colwidth="4" header="Possible Motivation"> {this.state.possibleMotivation} </BDRPTableCell>
-                </div>
-                {this.props.viewer.courseStr.substring(0,1) != 's' ?
-                (<div id="" className="row bdr-row">
-                  <BDRPTableCell colwidth="6" header="Incident Description"> {this.state.behaviorAnecdote } </BDRPTableCell>
-		              <BDRPTableCell colwidth="6" header="Staff Response"> {this.state.teacherResponse} </BDRPTableCell>
-                </div>) : null}
-              </div>;
+    return (
+      <div
+        id=""
+        className="col-xs-12 bdr-panel-table"
+      >
+        <div
+          id=""
+          className="row bdr-row"
+        >
+          <BDRPTableCell
+            colwidth="4"
+            header="Date/Time"
+          >
+            {this.state.bdrdate}
+            <br/>
+            {this.state.bdrtime}
+            <br/>
+            {"Period " + this.state.incidentPeriod}
+          </BDRPTableCell>
+          <BDRPTableCell
+            colwidth="4"
+            middlecell="bdr-middle-cell"
+            header="Student Name"
+          >
+            {this.state.studentName }
+          </BDRPTableCell>
+   		    <BDRPTableCell
+            colwidth="4"
+            header="Staff Name"
+          >
+            {this.state.staffName }
+          </BDRPTableCell>
+        </div>
+        <div
+          id=""
+          className="row bdr-row"
+        >
+          <BDRPTableCell
+            colwidth="4"
+            header="Location"
+          >
+            {this.state.location}
+          </BDRPTableCell>
+		      <BDRPTableCell
+            colwidth="4"
+            middlecell="bdr-middle-cell"
+            header="Others Involved"
+          >
+            {this.state.othersInvolved}
+          </BDRPTableCell>
+		      <BDRPTableCell
+            colwidth="4"
+            header="Possible Motivation"
+          >
+            {this.state.possibleMotivation}
+          </BDRPTableCell>
+        </div>
+        {
+          this.props.viewer.courseStr.substring(0,1) != 's'
+          ?
+            (
+              <div
+                id=""
+                className="row bdr-row"
+              >
+                <BDRPTableCell
+                  colwidth="6"
+                  header="Incident Description"
+                >
+                  {this.state.behaviorAnecdote}
+                </BDRPTableCell>
+		            <BDRPTableCell
+                  colwidth="6"
+                  header="Staff Response"
+                >
+                  {this.state.teacherResponse}
+                </BDRPTableCell>
+              </div>
+            )
+          : null
+        }
+      </div>
+    )
   }
 }
 

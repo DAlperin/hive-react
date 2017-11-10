@@ -19,25 +19,134 @@ class MentoringComments extends React.Component {
   }
 
   render(){
-    return (<ul className="list-group">
-				{this.props.comments.map((comment,id) => <li key={"goalcomment" + id} className="list-group-item"><strong>{(comment.title && comment.lastName) ? comment.title + ' ' + comment.lastName + ': ' : "You: "}</strong>{comment.commentText}<br/>{this.processDate(comment.submissionDateTime) + (comment.commenterUDID == this.props.studentUDID ? '' :' - ' + this.mRs[parseInt(comment.goalMR)])}</li> )}
+    return (
+      <ul
+        className="list-group"
+      >
+				{
+          this.props.comments.map(
+            (comment,id) => (
+              <li
+                key={"goalcomment" + id}
+                className="list-group-item"
+              >
+                <strong>
+                  {
+                    (comment.title && comment.lastName)
+                    ?
+                      comment.title + ' ' + comment.lastName + ': '
+                    : "You: "
+                  }
+                </strong>
+                {comment.commentText}
+                <br/>
+                {
+                  this.processDate(comment.submissionDateTime) + 
+                  (
+                    comment.commenterUDID == this.props.studentUDID
+                    ? '' 
+                    : ' - ' + this.mRs[parseInt(comment.goalMR)]
+                  )
+                }
+              </li>
+            )
+          )
+        }
 			{/* (i+16)%24 <= 12 ? ((i+16)%24 != 0 ? (i+16)%24 : 12) + 'am' : (((i+16)%24) - 12) + 'pm' */}
-			<li className="list-group-item">
-				<div className="form-group">
-				  <label htmlFor="exampleTextarea">New Comment:</label>
-				  <textarea className="form-control" id="exampleTextarea" rows="3" onChange={function(e){this.changeNewCommentText(e.target.value)}.bind(this)} value={this.state.newCommentText}></textarea>
-				  <br/>
-          { this.props.viewer.courseStr.substring(0,1) != 's' ?
-				  (<div className="btn-group" role="group" aria-label="...">
-					  <button type="button" className={"btn btn-default " + (this.state.newCommentRating == 1 ? 'active' : '')} onClick={function(e){this.changeNewCommentRating(1)}.bind(this)}>Not Yet</button>
-					  <button type="button" className={"btn btn-default " + (this.state.newCommentRating == 2 ? 'active' : '')} onClick={function(e){this.changeNewCommentRating(2)}.bind(this)}>Approaching</button>
-					  <button type="button" className={"btn btn-default " + (this.state.newCommentRating == 3 ? 'active' : '')} onClick={function(e){this.changeNewCommentRating(3)}.bind(this)}>Meeting</button>
-					  <button type="button" className={"btn btn-default " + (this.state.newCommentRating == 4 ? 'active' : '')} onClick={function(e){this.changeNewCommentRating(4)}.bind(this)}>Exceeding</button>
-				  </div>) : null }
-				  <button type="button" className="btn btn-primary" onClick={this.submitNewComment}>Submit</button>
-				</div>
-  			</li>
-			</ul>)
+  			<li
+          className="list-group-item"
+        >
+  				<div
+            className="form-group"
+          >
+  				  <label
+              htmlFor="exampleTextarea"
+            >
+              New Comment:
+            </label>
+  				  <textarea
+              className="form-control"
+              id="exampleTextarea"
+              rows="3"
+              onChange={
+                function(e){
+                  this.changeNewCommentText(e.target.value)
+                }.bind(this)
+              }
+              value={this.state.newCommentText}
+            >
+            </textarea>
+  				  <br/>
+            {
+              (this.props.viewer.courseStr.substring(0,1) != 's')
+              ?
+      				  (
+                  <div
+                    className="btn-group"
+                    role="group"
+                    aria-label="..."
+                  >
+        					  <button 
+                      type="button" 
+                      className={"btn btn-default " + (this.state.newCommentRating == 1 ? 'active' : '')} 
+                      onClick={
+                        function(e){
+                          this.changeNewCommentRating(1)
+                        }.bind(this)
+                      }
+                    >
+                      Not Yet
+                    </button>
+        					  <button 
+                      type="button" 
+                      className={"btn btn-default " + (this.state.newCommentRating == 2 ? 'active' : '')} 
+                      onClick={
+                        function(e){
+                          this.changeNewCommentRating(2)
+                        }.bind(this)
+                      }
+                    >
+                      Approaching
+                    </button>
+        					  <button 
+                      type="button" 
+                      className={"btn btn-default " + (this.state.newCommentRating == 3 ? 'active' : '')} 
+                      onClick={
+                        function(e){
+                          this.changeNewCommentRating(3)
+                        }.bind(this)
+                      }
+                    >
+                      Meeting
+                    </button>
+        					  <button 
+                      type="button" 
+                      className={"btn btn-default " + (this.state.newCommentRating == 4 ? 'active' : '')} 
+                      onClick={
+                        function(e){
+                          this.changeNewCommentRating(4)
+                        }.bind(this)
+                      }
+                    >
+                      Exceeding
+                    </button>
+        				  </div>
+                )
+              : null
+            }
+  				  <button
+              type="button"
+              className="btn btn-primary"
+              onClick={
+                this.submitNewComment
+              }
+            >
+              Submit
+            </button>
+  				</div>
+    		</li>
+			</ul>
+    )
   }
 
   changeNewCommentText(text){

@@ -103,7 +103,13 @@ class BDRJumbo extends React.Component {
     this.setState({classFilter:text})
   }
   
-  componentWillMount(){this.props.viewer.courseStr.substring(0,1) != 's' ? this.getSWIPsForThreshold("le20")() : this._viewOptionSelect('mybdr')}
+  componentWillMount(){
+    this.props.viewer.courseStr.substring(0,1) != 's'
+    ?
+     this.getSWIPsForThreshold("le20")() 
+    :
+      this._viewOptionSelect('mybdr')
+    }
   
   render(){
     let list
@@ -111,25 +117,126 @@ class BDRJumbo extends React.Component {
     if (this.state.viewOption == "bdr"){
       list = this._getBDRs();
     } else if (this.state.viewOption == "swipTable"){
-      list = <div><SWIPFilter setSWIPTableFilterByUDID={this.setSWIPTableFilterByUDID} changeSWIPThreshold={this.changeSWIPThreshold} filterSWIPClass={this.filterSWIPClass} filterSWIPStu={this.filterSWIPStu}/>
-      <SWIPContainer setSWIPTableFilterByUDID={this.setSWIPTableFilterByUDID} swipRows={this.state.swipArr} getBDRsByUDID={this.getBDRsByUDID} swipThreshold={this.state.swipThreshold} nameFilter={this.state.nameFilter} classFilter={this.state.classFilter} udidFilter={this.state.udidFilter}/></div>
+      list = (
+                <div>
+                  <SWIPFilter
+                    setSWIPTableFilterByUDID={this.setSWIPTableFilterByUDID}
+                    changeSWIPThreshold={this.changeSWIPThreshold}
+                    filterSWIPClass={this.filterSWIPClass}
+                    filterSWIPStu={this.filterSWIPStu}
+                  />
+                  <SWIPContainer
+                    setSWIPTableFilterByUDID={this.setSWIPTableFilterByUDID}
+                    swipRows={this.state.swipArr}
+                    getBDRsByUDID={this.getBDRsByUDID}
+                    swipThreshold={this.state.swipThreshold}
+                    nameFilter={this.state.nameFilter}
+                    classFilter={this.state.classFilter}
+                    udidFilter={this.state.udidFilter}
+                  />
+                </div>
+              )
     } else if (this.state.viewOption == "stulookup") {
-      list = <div><SWIPContainer setSWIPTableFilterByUDID={this.setSWIPTableFilterByUDID} swipRows={this.state.swipArr} getBDRsByUDID={function(){return null}} swipThreshold={"le20"} nameFilter={""} classFilter={""} udidFilter={this.state.udidFilter} /> {this._getBDRs()}</div>
+      list = (
+                <div>
+                  <SWIPContainer
+                    setSWIPTableFilterByUDID={this.setSWIPTableFilterByUDID}
+                    swipRows={this.state.swipArr}
+                    getBDRsByUDID={
+                      function(){return null}
+                    }
+                    swipThreshold={"le20"}
+                    nameFilter={""}
+                    classFilter={""}
+                    udidFilter={this.state.udidFilter}
+                  />
+                  {this._getBDRs()}
+                </div>
+              )
     } else if (this.state.viewOption == "newBDR") {
-      list = <NewBDRPanel authorUDID={this.props.viewer.entryID} newBDRTrigger={function(){this._viewOptionSelect('mybdr')}.bind(this)}/>
+      list = (
+                <NewBDRPanel
+                  authorUDID={this.props.viewer.entryID}
+                  newBDRTrigger={
+                    function(){
+                      this._viewOptionSelect('mybdr')
+                    }.bind(this)
+                  }
+                  />
+              )
     }
     else list = null
     
     
-    return( <div id="" className="jumbotron">
-             <h1 className="jumbo-head-reset" onClick={function(){this._viewOptionSelect('swipsHome')}.bind(this)}><img height="100" src="./public/img/SWIPSGraph.png"/>{(this.props.viewer.courseStr.substring(0,1) != 's' ? null : this.state.swipCount)} SWIPs</h1>
-             {this.props.viewer.courseStr.substring(0,1) != 's' ?
-              (<div><button type="button" className="btn btn-primary" onClick={function(){this._viewOptionSelect('mybdr')}.bind(this)}>View My BDRs</button>
-              <button type="button" className="btn btn-primary" onClick={function(){this._viewOptionSelect('swipTable')}.bind(this)}>View the SWIP Table</button>
-              <button type="button" className="btn btn-primary" onClick={function(){this._viewOptionSelect('newBDR')}.bind(this)}>Write New BDR</button>
-
-              <br /></div>) : null}
-              {list}
+    return(
+      <div
+        id=""
+        className="jumbotron"
+      >
+        <h1
+          className="jumbo-head-reset"
+          onClick={
+            function(){
+              this._viewOptionSelect('swipsHome')
+            }.bind(this)
+          }
+        >
+          <img
+            height="100"
+            src="./public/img/SWIPSGraph.png"
+          />
+          {
+            (this.props.viewer.courseStr.substring(0,1) != 's'
+              ?
+                null
+              : 
+                this.state.swipCount
+            )
+          } SWIPs
+        </h1>
+        {
+          this.props.viewer.courseStr.substring(0,1) != 's'
+          ?
+            (
+              <div>
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={
+                    function(){
+                      this._viewOptionSelect('mybdr')
+                    }.bind(this)
+                  }
+                >
+                  View My BDRs
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={
+                    function(){
+                      this._viewOptionSelect('swipTable')
+                    }.bind(this)
+                  }
+                >
+                  View the SWIP Table
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={
+                    function(){
+                      this._viewOptionSelect('newBDR')
+                    }.bind(this)
+                  }
+                >
+                  Write New BDR
+                </button>
+                <br />
+              </div>)
+          : null
+        }
+        {list}
 	    </div> );
 }
 
@@ -164,7 +271,19 @@ class BDRJumbo extends React.Component {
     var bdrArr = this.state.bdrArr
     var bdrMap = bdrArr.map((bdr,id) => {
         if(!bdr.hasOwnProperty('comments')){bdr.comments = []}
-      return (<BDRPanel key={bdr.entryID} bdr={bdr} viewerID={this.props.viewer.entryID} viewer={this.props.viewer} updateBDRComments={function(comment){this.updateBDRComments(id,comment)}.bind(this)}/>)
+      return (
+        <BDRPanel
+          key={bdr.entryID}
+          bdr={bdr}
+          viewerID={this.props.viewer.entryID}
+          viewer={this.props.viewer}
+          updateBDRComments={
+            function(comment){
+              this.updateBDRComments(id,comment)
+            }.bind(this)
+          }
+        />
+      )
     })
     //bdrMap.splice(0,0,<NewBDRPanel key={0}/>)
     return bdrMap

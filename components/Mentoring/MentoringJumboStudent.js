@@ -19,10 +19,38 @@ class MentoringJumboStudent extends React.Component {
       //let name = this.props.user.title;
 
     
-    return( <div id="" className="jumbotron">
-              <h1>Mentoring {(this.state.activeMentoring.hasOwnProperty('mentorName') ? 'with ' + this.state.activeMentoring.mentorName : '' )}</h1>
-        {(this.state.activeMentoring != '') ? (<MentoringContainer goals={this.state.activeGoals} mentee={this.state.activeMentoring} updateGoalComments={this.updateGoalComments} appendGoal={this.props.appendGoal} viewer={this.props.viewer}/>) : null}
-	    </div> );
+    return(
+      <div
+        id=""
+        className="jumbotron"
+      >
+        <h1>
+          Mentoring
+          {
+            (
+              this.state.activeMentoring.hasOwnProperty('mentorName')
+              ?
+                'with ' + this.state.activeMentoring.mentorName
+              : ''
+            )
+          }
+        </h1>
+        {
+          (this.state.activeMentoring != '')
+          ?
+          (
+            <MentoringContainer
+              goals={this.state.activeGoals}
+              mentee={this.state.activeMentoring}
+              updateGoalComments={this.updateGoalComments}
+              appendGoal={this.props.appendGoal}
+              viewer={this.props.viewer}
+            />
+          )
+          : null
+        }
+	    </div> 
+    )
   }
 
   componentDidMount(){

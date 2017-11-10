@@ -19,40 +19,212 @@ class newAssessView extends React.Component {
 	}
 
 	render(){
-		return <div className="container">
-			<div className="panel panel-default">
-				<div className="panel-heading">
-					New Assessment <button type="button" className="btn btn-success" aria-label="Submit" onClick={this._submitNewAssess.bind(this)}>Submit</button><button type="button" className="btn btn-danger" aria-label="Close" onClick={this.props.cancel}>Cancel</button>
-				</div>
-				<div className="panel-body">
-					<div className="form-group">
-                    	<label htmlFor="AssessTitle"><span className="glyphicon glyphicon-comment"></span> Assessment Title:</label>
-                    	<input className="form-control" value={this.state.AssessTitle} id="AssessTitle" onChange={function(e){this.changeInput({AssessTitle:e.target.value})}.bind(this)}/>
-                      <br/>
-                    	<label htmlFor="AssessDesc"><span className="glyphicon glyphicon-comment"></span> Assessment Description:</label>
-                    	<textarea className="form-control" value={this.state.AssessDesc} id="AssessDesc" rows="5" onChange={function(e){this.changeInput({AssessDesc:e.target.value})}.bind(this)}></textarea>
-                      <br/>
-                    	<label htmlFor="AssessLink"><span className="glyphicon glyphicon-comment"></span> Assessment Link:</label>
-                    	<input className="form-control" value={this.state.AssessLink} id="AssessLink" onChange={function(e){this.changeInput({AssessLink:e.target.value})}.bind(this)}/>
-                      <br/>
-                    	<label htmlFor="assessSelDate"><span className="glyphicon glyphicon-calendar"></span> Date:</label>
-                    	<select className="form-control" value={this.state.AssessDate} id="assessSelDate" onChange={function(e){var assessDJ = (new Date(e.target.value)).toJSON(); var str = assessDJ.substring(0,10); console.log(str); this.changeInput({AssessDate:str})}.bind(this)}>
-                    		{datesList.map((date,id)=>(<option key={id} value={(new Date(date)).toJSON().substring(0,10)}>{date}</option>))}
-                    	</select>
-                	  <br/>
-                	  <br/>
-                		<label htmlFor="LOSelect">{this.state.loalign.length} Learning Outcome(s) Assessed: <button className="btn btn-success" onClick={function(){this._handleLOClick('all')}.bind(this)}>Select All</button><button className="btn btn-default" onClick={function(){this._handleLOClick('none')}.bind(this)}>Select None</button></label>
-                		<div id="LOSelect" className="container">
-                		<table className="table table-hover">
-                		<tbody>
-                		{this.props.LOs.map((LO,id) => (<tr key={LO.LOID} onClick={function(){this._handleLOClick(LO.LOID)}.bind(this)} className={"pointer " + (this.state.loalign.indexOf(LO.LOID) > -1 ? 'success' : '')}><td>{LO.LOText}</td></tr>))}
-                		</tbody>
-                		</table>
-                		</div>
-                    </div>
+		return (
+			<div 
+				className="container"
+			>
+				<div 
+					className="panel panel-default"
+				>
+					<div 
+						className="panel-heading"
+					>
+						New Assessment
+						<button 
+							type="button"
+							className="btn btn-success"
+							aria-label="Submit"
+							onClick={
+								this._submitNewAssess.bind(this)
+							}
+						>
+							Submit
+						</button>
+						<button 
+							type="button"
+							className="btn btn-danger"
+							aria-label="Close"
+							onClick={
+								this.props.cancel
+							}
+						>
+							Cancel
+						</button>
+					</div>
+					<div 
+						className="panel-body"
+					>
+						<div 
+							className="form-group"
+						>
+	          	<label 
+	          		htmlFor="AssessTitle"
+	          	>
+	          		<span 
+	          			className="glyphicon glyphicon-comment"
+	          		>
+	          		</span>
+	          		Assessment Title:
+	          	</label>
+	          	<input 
+	          		className="form-control"
+	          		value={this.state.AssessTitle}
+	          		id="AssessTitle"
+	          		onChange={
+	          			function(e){
+	          				this.changeInput({AssessTitle:e.target.value})
+	          			}.bind(this)
+	          		}
+	          	/>
+	            <br/>
+	          	<label 
+	          		htmlFor="AssessDesc"
+	          	>
+	          		<span 
+	          			className="glyphicon glyphicon-comment"
+	          		>
+	          		</span>
+	          		Assessment Description:
+	          	</label>
+	          	<textarea 
+	          		className="form-control"
+	          		value={this.state.AssessDesc}
+	          		id="AssessDesc"
+	          		rows="5"
+	          		onChange={
+	          			function(e){
+	          				this.changeInput({AssessDesc:e.target.value})
+	          			}.bind(this)
+	          		}
+	          	>
+	          	</textarea>
+	            <br/>
+	          	<label 
+	          		htmlFor="AssessLink"
+	          	>
+	          		<span 
+	          			className="glyphicon glyphicon-comment"
+	          		>
+	          		</span>
+	          		Assessment Link:
+	          	</label>
+	          	<input 
+	          		className="form-control"
+	          		value={this.state.AssessLink}
+	          		id="AssessLink"
+	          		onChange={
+	          			function(e){
+	          				this.changeInput({AssessLink:e.target.value})
+	          			}.bind(this)
+	          		}
+	          	/>
+	            <br/>
+	          	<label 
+	          		htmlFor="assessSelDate"
+	          	>
+	          		<span 
+	          			className="glyphicon glyphicon-calendar"
+	          		>
+	          		</span>
+	          		Date:
+	          	</label>
+	          	<select 
+	          		className="form-control"
+	          		value={this.state.AssessDate}
+	          		id="assessSelDate"
+	          		onChange={
+	          			function(e){
+	          				var assessDJ = (new Date(e.target.value)).toJSON();
+	          				var str = assessDJ.substring(0,10);
+	          				console.log(str);
+	          				this.changeInput({AssessDate:str})
+	          			}.bind(this)
+	          		}
+	          	>
+	          		{
+	          			datesList.map(
+	          				(date,id)=>(
+	          					<option 
+	          						key={id}
+	          						value={
+	          							(new Date(date))
+													.toJSON()
+													.substring(0,10)
+												}
+											>
+												{date}
+											</option>
+										)
+									)
+	          		}
+	          	</select>
+	      	  <br/>
+	      	  <br/>
+	      		<label 
+	      			htmlFor="LOSelect"
+	      		>
+	      			{this.state.loalign.length} Learning Outcome(s) Assessed:
+	      			<button 
+	      				className="btn btn-success"
+	      				onClick={
+	      					function(){
+	      						this._handleLOClick('all')
+	      					}.bind(this)
+	      				}
+	      			>
+	      				Select All
+	      			</button>
+	      			<button 
+	      				className="btn btn-default"
+	      				onClick={
+	      					function(){
+	      						this._handleLOClick('none')
+	      					}.bind(this)
+	      				}
+	      			>
+	      				Select None
+	      			</button>
+	      		</label>
+	      		<div 
+	      			id="LOSelect"
+	      			className="container"
+	      		>
+		      		<table 
+		      			className="table table-hover"
+		      		>
+		      			<tbody>
+		      				{
+		      					this.props.LOs.map(
+		      						(LO,id) => (
+		      							<tr 
+	      									key={LO.LOID}
+	      									onClick={
+	      										function(){
+	      											this._handleLOClick(LO.LOID)
+	      										}.bind(this)
+	      									}
+	      									className={
+	      										"pointer " + (
+	      											this.state.loalign.indexOf(LO.LOID) > -1 
+	      											? 'success'
+	      											: ''
+	      										)
+	      									}
+	      								>
+	      									<td>
+	      										{LO.LOText}
+	      									</td>
+	      								</tr>
+	      							)
+	      						)
+		      				}
+	      				</tbody>
+	      			</table>
+	      		</div>
+	        </div>
 				</div>
 			</div>
-		</div>
+		</div>)
 	}
 
 	changeInput(obj){

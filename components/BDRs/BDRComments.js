@@ -17,20 +17,82 @@ class BDRComments extends React.Component {
   }
 
 	render(){
-		return (<ul className="list-group">
-				{this.props.comments.map((comment,id) => (<li key={"bdrcomment" + id} className="list-group-item"><strong>{comment.title + ' ' + comment.lastName + ': ' }</strong>{comment.commentText}</li>) )}
-			    {this.props.restored ? null : <li className="list-group-item">
-					<div className="form-group">
-					  <label htmlFor="exampleTextarea">New Comment:</label>
-					  <textarea className="form-control" id="exampleTextarea" rows="3" onChange={function(e){this.changeNewCommentText(e.target.value)}.bind(this)} value={this.state.newCommentText}></textarea>
-					  <br/>
-					  {this.props.viewer.courseStr.substring(0,1) != 's' ? (<div className="checkbox" onClick={this.toggleRestoring}>
-					      <label><input type="checkbox" checked={this.state.restoring}/>Restore with this comment.</label>
-					  </div>) : null}
-					  <button type="button" className="btn btn-primary" onClick={this.submitNewComment}>Submit</button>
-					</div>
-	  			</li>}
-			</ul>)
+		return (
+			<ul
+				className="list-group"
+			>
+				{this.props.comments.map(
+						(comment,id) => (
+							<li
+								key={"bdrcomment" + id}
+								className="list-group-item"
+							>
+								<strong>
+									{comment.title + ' ' + comment.lastName + ': ' }
+								</strong>
+							  {comment.commentText}
+							</li>
+						)
+					)
+				}
+			    {
+			    	this.props.restored
+			    	? 
+			    	null 
+			    	:
+			    	<li
+			    		className="list-group-item"
+			    	>
+							<div
+								className="form-group"
+							>
+					  		<label
+					  			htmlFor="exampleTextarea"
+					  		>
+					  			New Comment:
+					  		</label>
+					  		<textarea
+					  			className="form-control"
+					  			id="exampleTextarea"
+					  			rows="3"
+					  			onChange={
+					  				function(e){
+					  					this.changeNewCommentText(e.target.value)
+					  				}.bind(this)
+					  			}
+					  			value={this.state.newCommentText}>
+					  		</textarea>
+					  		<br/>
+					  		{this.props.viewer.courseStr.substring(0,1) != 's' 
+					  			?
+					  			(
+					  				<div
+					  					className="checkbox"
+					  					onClick={this.toggleRestoring}
+					  				>
+					      			<label>
+					      				<input
+					      					type="checkbox"
+					      					checked={this.state.restoring}
+					      				/>
+					      				Restore with this comment.
+					      			</label>
+					  				</div>
+					  			)
+					  			: null
+					  		}
+					  		<button
+					  			type="button"
+					  			className="btn btn-primary"
+					  			onClick={this.submitNewComment}
+					  		>
+					  			Submit
+					  		</button>
+							</div>
+	  				</li>
+	  			}
+				</ul>
+			)
 		//return (<div>{(this.props.comments.length >=1) ? this.props.comments[0].commentText : null}</div>)
 		//return (<div>{this.props.comments.map((comment)=>(<p>{comment.commentText}</p>))}</div>)
 	}
