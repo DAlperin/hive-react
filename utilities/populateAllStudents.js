@@ -12,9 +12,12 @@ connection.query(query,
 	function(err,res,fds){
 		if(err) throw err
 		fs.writeFile('../devutil/allstudents.js',
-			res.map(
-				(item) => (
-					{name:item.name,entryID:item.entryID,classNo:item.classNo}
+			'module.exports = ' + 
+			JSON.stringify(
+				res.map(
+					(item) => (
+						{name:item.name,entryID:item.entryID,classNo:item.classNo}
+					)
 				)
 			),
 			(errw)=> {
