@@ -12,7 +12,7 @@ connection.query(query,
 	function(err,res,fds){
 		if(err) throw err
 		fs.writeFile('../devutil/allstudents.js',
-			JSON.parse(res).map(
+			res.map(
 				(item) => (
 					{name:item.name,entryID:item.entryID,classNo:item.classNo}
 				)
