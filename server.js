@@ -13,6 +13,7 @@ var bodyParser = require('body-parser')
 var cookieParser = require('cookie-parser')
 var uuid = require('node-uuid')
 var nmail = require('./nmail.js')
+var siftUser = require('./utilities/siftUser.js')
 
 function datetimeToString(dateString){
   var date = new Date(dateString)
@@ -113,311 +114,822 @@ app.get('/', function (req, res) {
     else{res.sendFile(__dirname + '/public/img/google_signin_buttons/btn_google_signin_dark_normal_web.png')}
 })
 
-app.get('/bdrsplusc/:queryStr',function(req, res) {
-  if(req.user && req.user.courseStr.substring(0,1) != 's'){
-    var query = [bdrQueries(req.params.queryStr.split("n")).query,'select bc.*, u.title, u.lastName from hive1718.bdrComments bc left join hive1718.userDirectory u on bc.commenterID=u.entryID where bc.bdrID in (select entryID from hive1718.bdrs where staffUDID in (' + req.params.queryStr.split("n").join(", ") + ') or studentUDID in (' + req.params.queryStr.split("n").join(", ") + '))'].join("; ")
-    connection.query(query,queryCallbacks.default(req,res))}
-  else if (req.user && req.user.courseStr.substring(0,1) == 's'){
-    var queryS = [bdrQueries(req.params.queryStr.split("n")).queryS,'select bc.*, u.title, u.lastName from hive1718.bdrComments bc left join hive1718.userDirectory u on bc.commenterID=u.entryID where bc.bdrID in (select entryID from hive1718.bdrs where staffUDID in (' + req.params.queryStr.split("n").join(", ") + ') or studentUDID in (' + req.params.queryStr.split("n").join(", ") + '))'].join("; ")
-    connection.query(queryS,queryCallbacks.default(req,res))}
-  else {res.send('[]')}
-  }
+app.get('/bdrsplusc/:queryStr',
+  siftUser(
+    {
+      studentResponse:
+        (
+          sR = function(req,res)
+          {
+            var queryS = [
+              bdrQueries(req.params.queryStr.split("n")).queryS,
+              'select bc.*, u.title, u.lastName from hive1718.bdrComments bc left join hive1718.userDirectory u on bc.commenterID=u.entryID where bc.bdrID in (select entryID from hive1718.bdrs where staffUDID in (' + req.params.queryStr.split("n").join(", ") + ') or studentUDID in (' + req.params.queryStr.split("n").join(", ") + '))'
+            ].join("; ")
+            connection.query(
+              queryS,
+              queryCallbacks.default(req,res)
+            )
+          }
+        ),
+      teacherResponse:
+        (
+           tR = function(req,res)
+          {
+            var query = [
+              bdrQueries(req.params.queryStr.split("n")).query,
+              'select bc.*, u.title, u.lastName from hive1718.bdrComments bc left join hive1718.userDirectory u on bc.commenterID=u.entryID where bc.bdrID in (select entryID from hive1718.bdrs where staffUDID in (' + req.params.queryStr.split("n").join(", ") + ') or studentUDID in (' + req.params.queryStr.split("n").join(", ") + '))'
+            ].join("; ")
+            connection.query(
+              query,
+              queryCallbacks.default(req,res)
+            )
+          }
+        ),
+      adminResponse:
+        tR,
+      empty:
+        ( empty = function(req,res){res.send('[]')})
+    }
+  )
   
 )
 
-app.get('/bdrs/:queryStr',function(req, res) {
-  console.log(bdrQueries(req.params.queryStr.split("n")))
-  connection.query(bdrQueries(req.params.queryStr.split("n")).query,queryCallbacks.default(req,res))
-})
-
-app.get('/swips/:threshold',function(req,res){
-  var ops = {'lt':'<','le':'<=','eq':'=','ge':'>=','gt':'>'}
-  var op = req.params.threshold.substring(0,2)
-  var num = req.params.threshold.substring(2)
-  var threshold = ops[op] + num
-  var addlcon = ""
-  connection.query('SELECT concat(u.title," ",u.lastName) name, u.classNo classNo, IF(s.SWIPS,s.SWIPS,20) AS swips, u.entryID stuUDID '
-        + 'FROM hive1718.userDirectory AS u '
-        + 'LEFT JOIN ( SELECT studentUDID, (20 - SUM(CASE WHEN ((swipCode >= 1)) THEN swipCode ELSE 0 END)) as SWIPS FROM hive1718.bdrs GROUP BY hive1718.bdrs.studentUDID ) as s '
-        + 'ON u.entryID=s.studentUDID '
-        + 'WHERE ( (u.courseStr REGEXP \'s\') AND ((s.SWIPS' + threshold + ') OR IF(20' + threshold +',ISNULL(s.SWIPS),FALSE)) ) ' + addlcon + ' ORDER BY u.classNo, u.lastName ', queryCallbacks.default(req,res))
-})
-
-app.get('/users', isLoggedIn, function(req, res){
-  if(req.user){console.log('user request from:')
-    console.log(req.user)
-    res.send(JSON.stringify([req.user]))
-  }
-  //connection.query('SELECT * FROM userDirectory where entryID=1',usersQueryCallback(req,res))
-  //connection.query('SELECT * FROM userDirectory where emailID REGEXP ' + req.user,usersQueryCallback(req,res))
-})
-
-app.get('/users/:udid',function(req, res){
-  if(req.user){console.log('user request from:')
-    console.log(req.user)
-    connection.query('SELECT * FROM hive1718.userDirectory where entryID in (' + req.params.udid.replace(/n/g,',') + ')',queryCallbacks.default(req,res,req.params.udid))
-  }
-  //connection.query('SELECT * FROM userDirectory where entryID=1',usersQueryCallback(req,res))
-  //connection.query('SELECT * FROM userDirectory where emailID REGEXP ' + req.user,usersQueryCallback(req,res))
-})
-
-app.get('/allstudents',function(req, res){
-  if(req.user){console.log('user request from:')
-    console.log(req.user)
-    connection.query('SELECT concat(title,\' \',lastName) as name, entryID, concat(emailID,\', \',IFNULL(altEmailStr,\'\')) as emails FROM hive1718.userDirectory where courseStr REGEXP \'s\'',queryCallbacks.default(req,res,req.params.udid))
-  }
-  //connection.query('SELECT * FROM userDirectory where entryID=1',usersQueryCallback(req,res))
-  //connection.query('SELECT * FROM userDirectory where emailID REGEXP ' + req.user,usersQueryCallback(req,res))
-})
-
-app.get('/coursestudents/:courseStr', function(req, res){
-  if(req.user){console.log('user request from:')
-    console.log(req.user)
-    connection.query('SELECT concat(title,\' \',lastName) as name, entryID, concat(emailID,\', \',IFNULL(altEmailStr,\'\')) as emails FROM hive1718.userDirectory where courseStr REGEXP ?',[req.params.courseStr],queryCallbacks.default(req,res,req.params.courseStr))
-  }
-  //connection.query('SELECT * FROM userDirectory where entryID=1',usersQueryCallback(req,res))
-  //connection.query('SELECT * FROM userDirectory where emailID REGEXP ' + req.user,usersQueryCallback(req,res))
-}) //need to leverage to populate assessmentratings
-
-app.get('/mentees/:udid',function(req, res){
-  if(req.user){console.log('mentee request from:')
-    console.log(req.user)
-    connection.query('SELECT * FROM hive1718.userDirectory where mentoringStr=' + req.params.udid,queryCallbacks.default(req,res,req.params.udid))
-  }
-  //connection.query('SELECT * FROM userDirectory where entryID=1',usersQueryCallback(req,res))
-  //connection.query('SELECT * FROM userDirectory where emailID REGEXP ' + req.user,usersQueryCallback(req,res))
-})
-
-app.get('/goals/:udid',function(req,res){
-  if(req.user){console.log('goal request from:')
-    console.log(req.user.emailID)
-    connection.query('SELECT * FROM hive1718.goals where studentUDID=' + req.params.udid,queryCallbacks.default(req,res,req.params.udid))
-  }
-})
-
-app.get('/goalsplusc/:udid',function(req,res){
-  if(req.user){console.log('goal & comments request from:')
-    console.log(req.user.emailID)
-    connection.query('SELECT * FROM hive1718.goals where studentUDID=' + req.params.udid + ' order by entryID desc; SELECT gc.*, u.title,u.lastName FROM hive1718.goalComments gc left join hive1718.userDirectory u on gc.commenterUDID=u.entryID where gc.goalID in (SELECT entryID from hive1718.goals where studentUDID=' + req.params.udid+ ' order by entryID desc);',queryCallbacks.default(req,res,req.params.udid))
-  }
-})
-
-app.get(['/mastery/:courseStr','/mastery/:courseStr/:stuUDID'],function(req,res){
-  if(req.user && req.user.courseStr.substring(0,1) != 's'){
-    if(!!req.params.stuUDID && !!req.params.courseStr){
-      var stuUDID = req.params.stuUDID
-      var queries = gradeQueries(connection.escape(req.params.courseStr),connection.escape(stuUDID))
-      connection.query(["SET @@group_concat_max_len = 8000",queries.studentRatingQuery, queries.studentBulkQuery].join("; "),queryCallbacks.mastery(req,res,req.params.courseStr))
+app.get('/bdrs/:queryStr',
+  siftUser(
+    {
+      studentResponse:
+        (
+           sR = function(req, res)
+          {
+            console.log(bdrQueries(req.params.queryStr.split("n")))
+            connection.query(
+              bdrQueries(req.params.queryStr.split("n")).query,
+              queryCallbacks.default(req,res)
+            )
+          }
+        ),
+      teacherResponse:
+        sR,
+      adminResponse:
+        sR,
+      empty:
+        ( empty = function(req,res){res.send('[]')})
     }
-    else {
-      var queries = gradeQueries(connection.escape(req.params.courseStr))
-      connection.query(["SET @@group_concat_max_len = 8000",queries.studentRatingQuery, queries.studentBulkQuery].join("; "),queryCallbacks.mastery(req,res,req.params.courseStr))
-    }
-  }
-  else if (req.user && (req.user.courseStr.substring(0,1) == 's')){
-    var stuUDID = req.user.entryID
-    var queries = gradeQueries(connection.escape(req.params.courseStr),connection.escape(stuUDID))
-    //console.log(queries)
-    connection.query(["SET @@group_concat_max_len = 8000",queries.studentRatingQuery, queries.studentBulkQuery].join("; "),queryCallbacks.mastery(req,res,req.params.courseStr))
-  }
-})
-
-app.get('/assessments/:courseStr/:assessID',function(req,res){
-  var queries = assessGradeQueries({courseStr:connection.escape(req.params.courseStr),assessID:connection.escape(req.params.assessID)})
-  console.log("assess query:")
-  console.log([queries.studentRatingQuery, queries.LOQuery, queries.assessQuery].join("; "))
-  connection.query([queries.studentRatingQuery, queries.LOQuery, queries.assessQuery].join("; "),queryCallbacks.default(req,res,req.params.courseStr))
-})
-
-app.get('/assessments/:courseStr',function(req,res){
-  var queries = "select * from hive1718.assessments where courseStr regexp " + connection.escape(req.params.courseStr)
-  connection.query(queries, queryCallbacks.default(req,res,req.params.courseStr))
-})
-
-app.post("/newassessment",function(req,res){
-    console.log(req.body)
-    var reqjson = req.body
-    if(reqjson.hasOwnProperty("courseStr") && reqjson.hasOwnProperty("LOAlign")){
-      connection.query('insert into hive1718.assessments (courseStr,LOAlign,AssessTitle,MRatings,AssessDate,AssessDesc,AssessLink) values (?,?,?,?,?,?,?)', [reqjson.courseStr,reqjson.LOAlign,reqjson.AssessTitle,"",reqjson.AssessDate,reqjson.AssessDesc,reqjson.AssessLink], queryCallbacks.insert(req,res))
-    }
-    //res.send(JSON.stringify(req.body))
-  
-  }
+  )
 )
 
-app.post("/newlo",function(req,res){
-    console.log(req.body)
-    var reqjson = req.body
-    /*if(reqjson.hasOwnProperty("courseStr") && reqjson.hasOwnProperty("LOAlign")){
-    connection.query('insert into hive1718.assessments (courseStr,LOAlign,AssessTitle,MRatings,AssessDate,AssessDesc,AssessLink) values (?,?,?,?,?,?,?)', [reqjson.string,reqjson.assessRatingID], function (error, results, fields) {
-    if (error) throw error;
-    
-    })}*/
-    if(reqjson.hasOwnProperty("courseStr") && reqjson.hasOwnProperty("LOCode") && reqjson.hasOwnProperty("LOText")){
-      connection.query('insert into hive1718.LOs (courseStr,LOCode,LOText) values (?,?,?)', [reqjson.courseStr,reqjson.LOCode,reqjson.LOText], queryCallbacks.insert(req,res))
+app.get('/swips/:threshold',
+  siftUser(
+    {
+      studentResponse:
+        ( empty = function(req,res){res.send('[]')}),
+      teacherResponse:
+        (
+           tR = function(req,res)
+          {
+            var ops = {'lt':'<','le':'<=','eq':'=','ge':'>=','gt':'>'}
+            var op = req.params.threshold.substring(0,2)
+            var num = req.params.threshold.substring(2)
+            var threshold = ops[op] + num
+            var addlcon = ""
+            connection.query(
+              'SELECT concat(u.title," ",u.lastName) name, u.classNo classNo, IF(s.SWIPS,s.SWIPS,20) AS swips, u.entryID stuUDID '
+                  + 'FROM hive1718.userDirectory AS u '
+                  + 'LEFT JOIN ( SELECT studentUDID, (20 - SUM(CASE WHEN ((swipCode >= 1)) THEN swipCode ELSE 0 END)) as SWIPS FROM hive1718.bdrs GROUP BY hive1718.bdrs.studentUDID ) as s '
+                  + 'ON u.entryID=s.studentUDID '
+                  + 'WHERE ( (u.courseStr REGEXP \'s\') AND ((s.SWIPS' + threshold + ') OR IF(20' + threshold +',ISNULL(s.SWIPS),FALSE)) ) ' + addlcon + ' ORDER BY u.classNo, u.lastName ',
+              queryCallbacks.default(req,res)
+            )
+          }
+        ),
+      adminResponse:
+        tR,
+      empty:
+        empty
     }
-    //res.send(JSON.stringify(req.body))
-  
-  }
+  )
 )
 
-app.get('/mymastery',function(req,res){
-  if(req.user && !(req.user.courseStr.indexOf('s') + 1)){
-    console.log('mastery request from:')
-    console.log(req.user)
-    var courseStr = req.user.courseStr.replace(/[at]/,"s").replace(/[0]/g,".")
-    var queries = gradeQueries(connection.escape(courseStr))
-    console.log(queries)
-    connection.query([queries.studentRatingQuery, queries.studentBulkQuery].join("; "),queryCallbacks.mastery(req,res,courseStr))
-  }  else{res.send("[,,,]")}
-})
+app.get('/users', isLoggedIn,
+  siftUser(
+    {
+      studentResponse:
+        (
+           sR = function(req, res)
+          {
+            console.log('user request from:')
+            console.log(req.user)
+            res.send(JSON.stringify([req.user]))
+            //connection.query('SELECT * FROM userDirectory where entryID=1',usersQueryCallback(req,res))
+            //connection.query('SELECT * FROM userDirectory where emailID REGEXP ' + req.user,usersQueryCallback(req,res))
+          }
+        ),
+      teacherResponse:
+        sR,
+      adminResponse:
+        sR,
+      empty:
+        ( empty = function(req,res){res.send('[]')})
+    }
+  )
+)
 
-app.get('/mybdrs',function(req, res) {
-  if(req.user){
-    console.log('bdr request from:')
-    console.log(req.user)
-    connection.query(bdrQueries(req.user.entryID.toString().split("n")).query,queryCallbacks.default(req,res))
-  } else {res.send("[]")}
-}
+app.get('/users/:udid',
+  siftUser(
+    {
+      studentResponse:
+        (
+           sR = function(req, res)
+          {
+            console.log('user request from:')
+            console.log(req.user)
+            connection.query('SELECT * FROM hive1718.userDirectory where entryID in (' + req.params.udid.replace(/n/g,',') + ')',queryCallbacks.default(req,res,req.params.udid))
+            //connection.query('SELECT * FROM userDirectory where entryID=1',usersQueryCallback(req,res))
+            //connection.query('SELECT * FROM userDirectory where emailID REGEXP ' + req.user,usersQueryCallback(req,res))
+          }
+        ),
+      teacherResponse:
+        sR,
+      adminResponse:
+        sR,
+      empty:
+        ( empty = function(req,res){res.send('[]')})
+    }
+  )
+)
+
+app.get('/allstudents',
+  siftUser(
+    {
+      studentResponse:
+        ( empty = function(req,res){res.send('[]')}),
+      teacherResponse:
+        (
+           tR = function(req, res)
+          {
+            console.log('user request from:')
+            console.log(req.user)
+            connection.query(
+              'SELECT concat(title,\' \',lastName) as name, entryID, concat(emailID,\', \',IFNULL(altEmailStr,\'\')) as emails FROM hive1718.userDirectory where courseStr REGEXP \'s\'',
+              queryCallbacks.default(req,res,req.params.udid)
+            )
+            //connection.query('SELECT * FROM userDirectory where entryID=1',usersQueryCallback(req,res))
+            //connection.query('SELECT * FROM userDirectory where emailID REGEXP ' + req.user,usersQueryCallback(req,res))
+          }
+        ),
+      adminResponse:
+        tR,
+      empty:
+        empty
+    }
+  )
+)
+
+app.get('/coursestudents/:courseStr',
+  siftUser(
+    {
+      studentResponse:
+        ( empty = function(req,res){res.send('[]')}),
+      teacherResponse:
+        (
+           tR = function(req, res)
+          {
+            console.log('user request from:')
+            console.log(req.user)
+            connection.query(
+              'SELECT concat(title,\' \',lastName) as name, entryID, concat(emailID,\', \',IFNULL(altEmailStr,\'\')) as emails FROM hive1718.userDirectory where courseStr REGEXP ?',
+              [req.params.courseStr],
+              queryCallbacks.default(req,res,req.params.courseStr)
+            )
+            //connection.query('SELECT * FROM userDirectory where entryID=1',usersQueryCallback(req,res))
+            //connection.query('SELECT * FROM userDirectory where emailID REGEXP ' + req.user,usersQueryCallback(req,res))
+          }
+        ),
+      adminResponse:
+        tR,
+      empty:
+        empty
+    }
+  )
+) //need to leverage to populate assessmentratings
+
+app.get('/mentees/:udid',
+  siftUser(
+    {
+      studentResponse:
+        (
+           sR = function(req, res)
+          {
+            console.log('mentee request from:')
+            console.log(req.user)
+            connection.query(
+              'SELECT * FROM hive1718.userDirectory where mentoringStr=' + req.params.udid,
+              queryCallbacks.default(req,res,req.params.udid)
+            )
+            //connection.query('SELECT * FROM userDirectory where entryID=1',usersQueryCallback(req,res))
+            //connection.query('SELECT * FROM userDirectory where emailID REGEXP ' + req.user,usersQueryCallback(req,res))
+          }
+        ),
+      teacherResponse:
+        sR,
+      adminResponse:
+        sR,
+      empty:
+        ( empty = function(req,res){res.send('[]')})
+    }
+  )
+)
+
+app.get('/goals/:udid',
+  siftUser(
+    {
+      studentResponse:
+        (
+           sR = function(req,res)
+          {
+            console.log('goal request from:')
+            console.log(req.user.emailID)
+            connection.query(
+              'SELECT * FROM hive1718.goals where studentUDID=' + req.params.udid,
+              queryCallbacks.default(req,res,req.params.udid)
+            )
+          }
+        ),
+      teacherResponse:
+        sR,
+      adminResponse:
+        sR,
+      empty:
+        ( empty = function(req,res){res.send('[]')})
+    }
+  )
+)
+
+app.get('/goalsplusc/:udid',
+  siftUser(
+    {
+      studentResponse:
+        (
+           sR = function(req,res)
+          {
+            console.log(req.user.emailID)
+            connection.query(
+              'SELECT * FROM hive1718.goals where studentUDID=' + req.params.udid + ' order by entryID desc; SELECT gc.*, u.title,u.lastName FROM hive1718.goalComments gc left join hive1718.userDirectory u on gc.commenterUDID=u.entryID where gc.goalID in (SELECT entryID from hive1718.goals where studentUDID=' + req.params.udid+ ' order by entryID desc);',
+              queryCallbacks.default(req,res,req.params.udid)
+            )
+          }
+        ),
+      teacherResponse:
+        sR,
+      adminResponse:
+        sR,
+      empty:
+        ( empty = function(req,res){res.send('[]')})
+    }
+  )
+)
+
+app.get(['/mastery/:courseStr','/mastery/:courseStr/:stuUDID'],
+  siftUser(
+    {
+      studentResponse:
+        (
+           sR = function(req,res)
+          {
+            var stuUDID = req.user.entryID
+            var queries = gradeQueries(connection.escape(req.params.courseStr),connection.escape(stuUDID))
+            //console.log(queries)
+            connection.query(
+              ["SET @@group_concat_max_len = 8000",
+                queries.studentRatingQuery,
+                queries.studentBulkQuery].join("; "),
+              queryCallbacks.mastery(req,res,req.params.courseStr)
+            )
+          }
+        ),
+      teacherResponse:
+        (
+           tR = function(req,res)
+          {
+            if(!!req.params.stuUDID && !!req.params.courseStr){
+              var stuUDID = req.params.stuUDID
+              var queries = gradeQueries(connection.escape(req.params.courseStr),connection.escape(stuUDID))
+              connection.query(
+                ["SET @@group_concat_max_len = 8000",
+                  queries.studentRatingQuery,
+                  queries.studentBulkQuery].join("; "),
+                queryCallbacks.mastery(req,res,req.params.courseStr)
+              )
+            }
+            else {
+              var queries = gradeQueries(connection.escape(req.params.courseStr))
+              connection.query(
+                ["SET @@group_concat_max_len = 8000",
+                  queries.studentRatingQuery,
+                  queries.studentBulkQuery].join("; "),
+                queryCallbacks.mastery(req,res,req.params.courseStr)
+              )
+            }
+          }
+        ),
+      adminResponse:
+        tR,
+      empty:
+        ( empty = function(req,res){res.send('[]')})
+    }
+  )
+)
+
+app.get('/assessments/:courseStr/:assessID',
+  siftUser(
+    {
+      studentResponse:
+        ( empty = function(req,res){res.send('[]')}),
+      teacherResponse:
+        (
+           tR = function(req,res)
+          {
+            var queries = assessGradeQueries({courseStr:connection.escape(req.params.courseStr),assessID:connection.escape(req.params.assessID)})
+            console.log("assess query:")
+            console.log([queries.studentRatingQuery, queries.LOQuery, queries.assessQuery].join("; "))
+            connection.query(
+              [queries.studentRatingQuery, queries.LOQuery, queries.assessQuery].join("; "),
+              queryCallbacks.default(req,res,req.params.courseStr)
+            )
+          }
+        ),
+      adminResponse:
+        tR,
+      empty:
+        empty
+    }
+  )
+)
+
+app.get('/assessments/:courseStr',
+  siftUser(
+    {
+      studentResponse:
+        (
+           sR = function(req,res)
+          {
+            var queries = "select * from hive1718.assessments where courseStr regexp " + connection.escape(req.params.courseStr)
+            connection.query(
+              queries,
+              queryCallbacks.default(req,res,req.params.courseStr)
+            )
+          }
+        ),
+      teacherResponse:
+        sR,
+      adminResponse:
+        sR,
+      empty:
+        ( empty = function(req,res){res.send('[]')})
+    }
+  )
+)
+
+app.post("/newassessment",
+  siftUser(
+    {
+      studentResponse:
+        ( empty = function(req,res){res.send('[]')}),
+      teacherResponse:
+        (
+           tR = function(req,res)
+          {
+            console.log(req.body)
+            var reqjson = req.body
+            if(
+              reqjson.hasOwnProperty("courseStr")
+              && reqjson.hasOwnProperty("LOAlign")
+            ){
+              connection.query(
+                'insert into hive1718.assessments (courseStr,LOAlign,AssessTitle,MRatings,AssessDate,AssessDesc,AssessLink) values (?,?,?,?,?,?,?)',
+                [reqjson.courseStr,reqjson.LOAlign,reqjson.AssessTitle,"",reqjson.AssessDate,reqjson.AssessDesc,reqjson.AssessLink],
+                queryCallbacks.insert(req,res)
+              )
+            }
+            //res.send(JSON.stringify(req.body))
+          }
+        ),
+      adminResponse:
+        tR,
+      empty:
+        empty
+    }
+  )
+)
+
+app.post("/newlo",
+  siftUser(
+    {
+      studentResponse:
+        ( empty = function(req,res){res.send('[]')}),
+      teacherResponse:
+        (
+           tR = function(req,res)
+          {
+            console.log(req.body)
+            var reqjson = req.body
+            /*if(reqjson.hasOwnProperty("courseStr") && reqjson.hasOwnProperty("LOAlign")){
+            connection.query('insert into hive1718.assessments (courseStr,LOAlign,AssessTitle,MRatings,AssessDate,AssessDesc,AssessLink) values (?,?,?,?,?,?,?)', [reqjson.string,reqjson.assessRatingID], function (error, results, fields) {
+            if (error) throw error;
+            })}*/
+            if(
+              reqjson.hasOwnProperty("courseStr")
+              && reqjson.hasOwnProperty("LOCode")
+              && reqjson.hasOwnProperty("LOText")
+            ){
+              connection.query(
+                'insert into hive1718.LOs (courseStr,LOCode,LOText) values (?,?,?)',
+                [reqjson.courseStr,reqjson.LOCode,reqjson.LOText],
+                queryCallbacks.insert(req,res)
+              )
+            }
+            //res.send(JSON.stringify(req.body))
+          }
+        ),
+      adminResponse:
+        tR,
+      empty:
+        empty
+    }
+  )
+)
+
+app.get('/mymastery',
+  siftUser(
+    {
+      studentResponse:
+        (
+           sR = function(req,res)
+          {
+            console.log('mastery request from:')
+            console.log(req.user)
+            var courseStr = req.user.courseStr.replace(/[at]/,"s").replace(/[0]/g,".")
+            var queries = gradeQueries(connection.escape(courseStr))
+            console.log(queries)
+            connection.query(
+              [queries.studentRatingQuery, queries.studentBulkQuery].join("; "),
+              queryCallbacks.mastery(req,res,courseStr)
+            )
+          }
+        ),
+      teacherResponse:
+        sR,
+      adminResponse:
+        sR,
+      empty:
+        ( empty = function(req,res){res.send("[,,,]")})
+    }
+  )
+)
+
+app.get('/mybdrs',
+  siftUser(
+    {
+      studentResponse:
+        (
+           sR = function(req, res)
+          {
+            console.log('bdr request from:')
+            console.log(req.user)
+            connection.query(
+              bdrQueries(req.user.entryID.toString().split("n")).query,queryCallbacks.default(req,res)
+            )
+          }
+        ),
+      teacherResponse:
+        sR,
+      adminResponse:
+        sR,
+      empty:
+        ( empty = function(req,res){res.send('[]')})
+    }
+  )
 )
 
 
-app.get('/los/:courseQueryStr',function(req, res){
-  console.log('SELECT * FROM LOs WHERE courseStr REGEXP ' + req.params.courseQueryStr.toString())
-  connection.query('SELECT * FROM LOs WHERE courseStr REGEXP \'' + req.params.courseQueryStr.toString() + '\'', queryCallbacks.default(req,res))
-})
-
-
-app.post("/sendgrades",function(req,res){
-    console.log(req.body)
-    var reqjson = req.body
-    if(reqjson.hasOwnProperty("string") && reqjson.hasOwnProperty("assessRatingID")){
-    connection.query('UPDATE hive1718.assessmentRatings SET ratings = ? WHERE entryID = ?', [reqjson.string,reqjson.assessRatingID], function (error, results, fields) {
-    if (error) throw error;
-    
-    })}
-    res.send(JSON.stringify(req.body))
-  
-  }
+app.get('/los/:courseQueryStr',
+  siftUser(
+    {
+      studentResponse:
+        (
+           sR = function(req, res)
+          {
+            console.log('SELECT * FROM LOs WHERE courseStr REGEXP ' + req.params.courseQueryStr.toString())
+            connection.query(
+              'SELECT * FROM LOs WHERE courseStr REGEXP \'' + req.params.courseQueryStr.toString() + '\'',
+              queryCallbacks.default(req,res)
+            )
+          }
+        ),
+      teacherResponse:
+        sR,
+      adminResponse:
+        sR,
+      empty:
+        ( empty = function(req,res){res.send('[]')})
+    }
+  )
 )
 
-app.post("/sendgoalcomment",function(req,res){
-    var reqjson =req.body
-    var commenterUDID = req.user.entryID
-    if(req.user){
-      console.log('goalComment')
-      console.log(commenterUDID)
-      console.log(reqjson)
-      connection.query('INSERT INTO hive1718.goalComments (commenterUDID,goalID,submissionDateTime,commentText,goalMR) values (?,?,NOW(),?,?)',[commenterUDID,reqjson.goalID,reqjson.commentText,reqjson.goalMR],function (error, results, fields) {
-    if (error) throw error;
-    res.send(results)
-    })
-      //res.send('goal commented')
+
+app.post("/sendgrades",
+  siftUser(
+    {
+      studentResponse:
+        ( empty = function(req,res){res.send('[]')}),
+      teacherResponse:
+        (
+           tR = function(req,res)
+          {
+            console.log(req.body)
+            var reqjson = req.body
+            if(reqjson.hasOwnProperty("string") && reqjson.hasOwnProperty("assessRatingID")){
+              connection.query(
+                'UPDATE hive1718.assessmentRatings SET ratings = ? WHERE entryID = ?',
+                [reqjson.string,reqjson.assessRatingID],
+                function (error, results, fields) {
+                  if (error) throw error;
+                }
+              )
+            }
+            res.send(JSON.stringify(req.body))
+          
+          }
+        ),
+      adminResponse:
+        tR,
+      empty:
+        empty
     }
-  }
+  )
 )
 
-app.post("/sendgoal",function(req,res){
-    var reqjson =req.body
-    var goalerUDID = req.user.entryID
-    if(req.user){
-      console.log('goal')
-      console.log(goalerUDID)
-      console.log(reqjson)
-      var values = [reqjson.studentUDID,reqjson.goalText,reqjson.masteryReflection,reqjson.behaviorReflection,reqjson.personalReflection,reqjson.goalStrategy]
-      connection.query('INSERT INTO hive1718.goals (studentUDID,goalText,submissionDateTime,masteryReflection,behaviorReflection,personalReflection,goalStrategy) values (?,?,NOW(),?,?,?,?)',values,function (error, results, fields) {
-    if (error) throw error;
-    res.send(results)
-    })
-      //res.send('goal commented')
+app.post("/sendgoalcomment",
+  siftUser(
+    {
+      studentResponse:
+        (
+           sR = function(req,res)
+          {
+            var reqjson =req.body
+            var commenterUDID = req.user.entryID
+            console.log('goalComment')
+            console.log(commenterUDID)
+            console.log(reqjson)
+            connection.query(
+              'INSERT INTO hive1718.goalComments (commenterUDID,goalID,submissionDateTime,commentText,goalMR) values (?,?,NOW(),?,?)',
+              [commenterUDID,reqjson.goalID,reqjson.commentText,reqjson.goalMR],
+              function (error, results, fields) {
+                if (error) throw error;
+                res.send(results)
+              }
+            )
+            //res.send('goal commented')
+          }
+        ),
+      teacherResponse:
+        sR,
+      adminResponse:
+        sR,
+      empty:
+        ( empty = function(req,res){res.send('[]')})
     }
-  }
+  )
 )
 
-app.post("/sendbdr",function(req,res){
-    var reqjson =req.body
-    if(req.user){
-      console.log('new bdr')
-      console.log(reqjson)
-      connection.query('INSERT INTO hive1718.bdrs (studentUDID,incidentDateTime,incidentPeriod,othersInvolved,problemBehavior,behaviorAnecdote, teacherResponse,possibleMotivation,location,staffUDID,swipCode,submissionDateTime) values (?,?,?,?,?,?,?,?,?,?,?,NOW())',[reqjson.studentUDID,reqjson.incidentDateTime,reqjson.incidentPeriod,reqjson.othersInvolved,reqjson.problemBehavior,reqjson.behaviorAnecdote,reqjson.teacherResponse,reqjson.possibleMotivation,reqjson.location,reqjson.staffUDID,reqjson.swipCode],function (error, results, fields) {
-    if (error) throw error;
-    res.send(results)
-    connection.query('select * from (select classNo, emailID as sEmailID, concat(title,\' \',lastName) as sName, 1 as j from hive1718.userDirectory where entryID = ' + reqjson.studentUDID + ') u1 join (select emailID, concat(title,\' \',lastName) as aName, 1 as j from hive1718.userDirectory where entryID = ' + reqjson.staffUDID + ') u2 on u1.j = u2.j', function (error, results, fields) { if (error) throw error;
-    console.log(results)
-    var res0 = results[0]
-    //console.log(reqjson)
-    nmail([res0.sEmailID,res0.aEmailID,'ymolina@ms442.org','jsutton@ms442.org','camacho@ms442.org','gtavoularis@ms442.org'].join(', '),'New BDR: ' + res0.aName + ' -> ' + res0.sName + ' (' + res0.classNo + ')',
-      ['<strong>Behavior:</strong> ' + reqjson.problemBehavior,
-       '<strong>Date/Time:</strong> ' + datetimeToString(reqjson.incidentDateTime),
-       '<strong>Period:</strong> ' + reqjson.incidentPeriod,
-       '<strong>Location:</strong> ' + reqjson.location,
-       '<strong>SWIPs Lost:</strong> ' + reqjson.swipCode
-      ].join('<br/>'))
-    })
+app.post("/sendgoal",
+  siftUser(
+    {
+      studentResponse:
+        (
+           sR = function(req,res)
+          {
+            var reqjson =req.body
+            var goalerUDID = req.user.entryID
+            console.log('goal')
+            console.log(goalerUDID)
+            console.log(reqjson)
+            var values = [reqjson.studentUDID,reqjson.goalText,reqjson.masteryReflection,reqjson.behaviorReflection,reqjson.personalReflection,reqjson.goalStrategy]
+            connection.query(
+              'INSERT INTO hive1718.goals (studentUDID,goalText,submissionDateTime,masteryReflection,behaviorReflection,personalReflection,goalStrategy) values (?,?,NOW(),?,?,?,?)',
+              values,
+              function (error, results, fields) {
+                if (error) throw error;
+                res.send(results)
+              }
+            )
+            //res.send('goal commented')
+          }
+        ),
+      teacherResponse:
+        sR,
+      adminResponse:
+        sR,
+      empty:
+        ( empty = function(req,res){res.send('[]')})
     }
-    )
-      //res.send('goal commented')
-    }
-  }
+  )
 )
 
-app.post("/sendbdrcomment",function(req,res){
-    var reqjson =req.body
-    if(req.user){
-      console.log('new bdr comment')
-      console.log(reqjson)
-      connection.query('INSERT INTO hive1718.bdrComments (bdrID,commenterID,commentText,commentDT) values (?,?,?,NOW());' + (!!reqjson.restoring ? 'UPDATE hive1718.bdrs SET swipCode=(-1*swipCode), restoreDateTime=NOW() WHERE entryID=' + connection.escape(reqjson.bdrID) : ''),[reqjson.bdrID,reqjson.commenterID,reqjson.commentText],function (error, results, fields) {
-    if (error) throw error;
-    res.send(results)
-    })
-      //res.send('goal commented')
+app.post("/sendbdr",
+  siftUser(
+    {
+      studentResponse:
+        ( empty = function(req,res){res.send('[]')}),
+      teacherResponse:
+        ( tR = function(req,res)
+          {
+            var reqjson =req.body
+            console.log('new bdr')
+            console.log(reqjson)
+            connection.query(
+              'INSERT INTO hive1718.bdrs (studentUDID,incidentDateTime,incidentPeriod,othersInvolved,problemBehavior,behaviorAnecdote, teacherResponse,possibleMotivation,location,staffUDID,swipCode,submissionDateTime) values (?,?,?,?,?,?,?,?,?,?,?,NOW())',
+              [reqjson.studentUDID,reqjson.incidentDateTime,reqjson.incidentPeriod,reqjson.othersInvolved,reqjson.problemBehavior,reqjson.behaviorAnecdote,reqjson.teacherResponse,reqjson.possibleMotivation,reqjson.location,reqjson.staffUDID,reqjson.swipCode],
+              function (error, results, fields) {
+                if (error) throw error;
+                res.send(results)
+                connection.query(
+                  'select * from (select classNo, emailID as sEmailID, concat(title,\' \',lastName) as sName, 1 as j from hive1718.userDirectory where entryID = ' + reqjson.studentUDID + ') u1 join (select emailID, concat(title,\' \',lastName) as aName, 1 as j from hive1718.userDirectory where entryID = ' + reqjson.staffUDID + ') u2 on u1.j = u2.j',
+                  function (error, results, fields) {
+                    if (error) throw error;
+                    console.log(results)
+                    var res0 = results[0]
+                    //console.log(reqjson)
+                    nmail(
+                      [res0.sEmailID,res0.aEmailID,'ymolina@ms442.org','jsutton@ms442.org','camacho@ms442.org','gtavoularis@ms442.org'].join(', '),
+                      'New BDR: ' + res0.aName + ' -> ' + res0.sName + ' (' + res0.classNo + ')',
+                      ['<strong>Behavior:</strong> ' + reqjson.problemBehavior,
+                       '<strong>Date/Time:</strong> ' + datetimeToString(reqjson.incidentDateTime),
+                       '<strong>Period:</strong> ' + reqjson.incidentPeriod,
+                       '<strong>Location:</strong> ' + reqjson.location,
+                       '<strong>SWIPs Lost:</strong> ' + reqjson.swipCode
+                      ].join('<br/>')
+                    )
+                  }
+                )
+              }
+            )
+            //res.send('goal commented')
+          }
+        ),
+      adminResponse:
+        tR,
+      empty:
+        empty
     }
-  }
+  )
 )
 
-app.post("/upgradelateoou",function(req,res){
-    var reqjson =req.body
-    if(req.user){
-      connection.query('INSERT INTO hive1718.bdrComments (bdrID,commenterID,commentText,commentDT) values (?,?,?,NOW());' + 'UPDATE hive1718.bdrs SET swipCode=1 WHERE entryID=' + connection.escape(reqjson.bdrID),[reqjson.bdrID,reqjson.commenterID,reqjson.commentText],function (error, results, fields) {
-    if (error) throw error;
-    res.send(results)
-    })
+app.post("/sendbdrcomment",
+  siftUser(
+    {
+      studentResponse:
+        (
+           sR = function(req,res)
+          {
+            var reqjson =req.body
+            console.log('new bdr comment')
+            console.log(reqjson)
+            connection.query(
+              'INSERT INTO hive1718.bdrComments (bdrID,commenterID,commentText,commentDT) values (?,?,?,NOW())',
+              [reqjson.bdrID,reqjson.commenterID,reqjson.commentText],
+              function (error, results, fields) {
+                if (error) throw error;
+                res.send(results)
+              }
+            )
+            //res.send('goal commented')
+          }
+        ),
+      teacherResponse:
+        (
+           tR = function(req,res)
+          {
+            var reqjson =req.body
+            console.log('new bdr comment')
+            console.log(reqjson)
+            connection.query(
+              'INSERT INTO hive1718.bdrComments (bdrID,commenterID,commentText,commentDT) values (?,?,?,NOW());' + (!!reqjson.restoring ? 'UPDATE hive1718.bdrs SET swipCode=(-1*swipCode), restoreDateTime=NOW() WHERE entryID=' + connection.escape(reqjson.bdrID) : ''),
+              [reqjson.bdrID,reqjson.commenterID,reqjson.commentText],
+              function (error, results, fields) {
+                if (error) throw error;
+                res.send(results)
+              }
+            )
+            //res.send('goal commented')
+          }
+        ),
+      adminResponse:
+        tR,
+      empty:
+        ( empty = function(req,res){res.send('[]')})
     }
-})
-
-app.post("/sendnewgrade",function(req,res){
-    var reqjson =req.body
-    if(req.user){
-      console.log('new grades')
-      console.log(reqjson)
-      if(reqjson.hasOwnProperty('assessmentID')){
-      connection.query('INSERT INTO hive1718.assessmentRatings (assessmentID,studentUDID,ratings) values (?,?,?)',[reqjson.assessmentID,reqjson.studentUDID,reqjson.ratings],function (error, results, fields) {
-    if (error) throw error;
-    res.send(results)
-    })}
-      else {
-        console.log('new mratings')
-        connection.query('INSERT INTO hive1718.assessmentRatings (studentUDID,ratings,assessmentID) values (?,?,(select entryID from hive1718.assessments where courseStr regexp ? and MRatings = \'y\'))',[reqjson.studentUDID,reqjson.ratings,reqjson.courseStr],function (error, results, fields) {
-    if (error) throw error;
-    res.send(results)
-    })
-      }
-      //res.send('grade added')
-    }
-  }
+  )
 )
 
-app.get('/attendance',function(req,res){
-    if(req.user != 's'){
-      var query = 'select concat(u.title,\' \',u.lastName) as name, u.classNo as classNo, u.entryID, b.problemBehavior, b.swipCode, b.entryID as bdrID, b.commentText from hive1718.userDirectory u left join (select b1.*, bc.commentText as commentText from hive1718.bdrs b1 left join hive1718.bdrComments bc on b1.entryID = bc.bdrID  where b1.problemBehavior regexp concat(\'Arrival: \',substring(DATE_SUB(now(), interval 14400 second),6,5))) b on u.entryID=b.studentUDID where u.courseStr regexp \'s\' order by classNo, u.lastName'
-      console.log(query)
-      connection.query(query, function (error, results, fields) {
-        if (error) throw error;
-        res.send(results)
-      })
+app.post("/upgradelateoou",
+  siftUser(
+    {
+      studentResponse:
+        ( empty = function(req,res){res.send('[]')}),
+      teacherResponse:
+        (
+           tR = function(req,res)
+          {
+            var reqjson =req.body
+            connection.query(
+              'INSERT INTO hive1718.bdrComments (bdrID,commenterID,commentText,commentDT) values (?,?,?,NOW());' + 'UPDATE hive1718.bdrs SET swipCode=1 WHERE entryID=' + connection.escape(reqjson.bdrID),
+              [reqjson.bdrID,reqjson.commenterID,reqjson.commentText],
+              function (error, results, fields) {
+                if (error) throw error;
+                res.send(results)
+              }
+            )
+          }
+        ),
+      adminResponse:
+        tR,
+      empty:
+        function(req,res){res.send('[]')}
+    }
+  )
+)
 
-    } else res.send('')
-})
+app.post("/sendnewgrade",
+  siftUser(
+    {
+      studentResponse:
+        ( empty = function(req,res){res.send('[]')}),
+      teacherResponse:
+        (
+           tR = function(req,res)
+            {
+              var reqjson =req.body
+              console.log('new grades')
+              console.log(reqjson)
+              if(reqjson.hasOwnProperty('assessmentID')){
+                connection.query(
+                  'INSERT INTO hive1718.assessmentRatings (assessmentID,studentUDID,ratings) values (?,?,?)',
+                  [reqjson.assessmentID,reqjson.studentUDID,reqjson.ratings],
+                  function (error, results, fields) {
+                    if (error) throw error;
+                    res.send(results)
+                  }
+                )
+              }
+              else {
+                console.log('new mratings')
+                connection.query(
+                  'INSERT INTO hive1718.assessmentRatings (studentUDID,ratings,assessmentID) values (?,?,(select entryID from hive1718.assessments where courseStr regexp ? and MRatings = \'y\'))',
+                  [reqjson.studentUDID,reqjson.ratings,reqjson.courseStr],
+                  function (error, results, fields) {
+                    if (error) throw error;
+                    res.send(results)
+                  }
+                )
+              }
+              //res.send('grade added')
+          }
+        ),
+      adminResponse:
+        tR,
+      empty:
+        empty
+    }
+  )
+)
+
+app.get('/attendance',
+  siftUser(
+    {
+      studentResponse:
+        ( empty = function(req,res){res.send('[]')}),
+      teacherResponse:
+        (
+           tR = function(req,res)
+            {
+              var query = 'select concat(u.title,\' \',u.lastName) as name, u.classNo as classNo, u.entryID, b.problemBehavior, b.swipCode, b.entryID as bdrID, b.commentText from hive1718.userDirectory u left join (select b1.*, bc.commentText as commentText from hive1718.bdrs b1 left join hive1718.bdrComments bc on b1.entryID = bc.bdrID  where b1.problemBehavior regexp concat(\'Arrival: \',substring(DATE_SUB(now(), interval 14400 second),6,5))) b on u.entryID=b.studentUDID where u.courseStr regexp \'s\' order by classNo, u.lastName'
+              console.log(query)
+              connection.query(query,
+                function (error, results, fields) {
+                  if (error) throw error;
+                  res.send(results)
+                }
+              )
+            }
+        ),
+      adminResponse:
+        tR,
+      empty:
+        empty
+    }
+  )
+)
 
 
 
