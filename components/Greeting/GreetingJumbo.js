@@ -54,6 +54,17 @@ class GreetingJumbo extends React.Component {
                   </span>
                   Tech Repair
                 </a>
+                <a
+                  className="btn btn-info btn-lg"
+                  href="https://docs.google.com/forms/d/e/1FAIpQLSfWXDJ3tcn_ge0LO2lQMtwxZpc5N9y1PO6d5ipifl9p0zABLQ/viewform?usp=sf_link"
+                >
+                  <span
+                    className="glyphicon
+                    glyphicon-education"
+                  >
+                  </span>
+                  Tech Tutoring
+                </a>
                 <span
                   className="btn btn-info btn-lg"
                   onClick={this.viewAttendance.bind(this)}
@@ -76,6 +87,17 @@ class GreetingJumbo extends React.Component {
                 >
                 </span>
                 Tech Repair
+              </a>
+              <a
+                className="btn btn-info btn-lg"
+                href="https://docs.google.com/forms/d/e/1FAIpQLSfWXDJ3tcn_ge0LO2lQMtwxZpc5N9y1PO6d5ipifl9p0zABLQ/viewform?usp=sf_link"
+              >
+                <span
+                  className="glyphicon
+                  glyphicon-education"
+                >
+                </span>
+                Tech Tutoring
               </a>
             )
         }
