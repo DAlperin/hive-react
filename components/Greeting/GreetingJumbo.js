@@ -78,27 +78,29 @@ class GreetingJumbo extends React.Component {
             )
           :
             (
-              <a
-                className="btn btn-info btn-lg"
-                href="https://docs.google.com/forms/d/e/1FAIpQLSf3LAsfrbyfJLvE55AtkOE4W2BJV4rXnb0CACBMJ4aDIbtHLw/viewform?usp=sf_link"
-              >
-                <span
-                  className="glyphicon glyphicon-wrench"
+              <p>
+                <a
+                  className="btn btn-info btn-lg"
+                  href="https://docs.google.com/forms/d/e/1FAIpQLSf3LAsfrbyfJLvE55AtkOE4W2BJV4rXnb0CACBMJ4aDIbtHLw/viewform?usp=sf_link"
                 >
-                </span>
-                Tech Repair
-              </a>
-              <a
-                className="btn btn-info btn-lg"
-                href="https://docs.google.com/forms/d/e/1FAIpQLSfWXDJ3tcn_ge0LO2lQMtwxZpc5N9y1PO6d5ipifl9p0zABLQ/viewform?usp=sf_link"
-              >
-                <span
-                  className="glyphicon
-                  glyphicon-education"
+                  <span
+                    className="glyphicon glyphicon-wrench"
+                  >
+                  </span>
+                  Tech Repair
+                </a>
+                <a
+                  className="btn btn-info btn-lg"
+                  href="https://docs.google.com/forms/d/e/1FAIpQLSfWXDJ3tcn_ge0LO2lQMtwxZpc5N9y1PO6d5ipifl9p0zABLQ/viewform?usp=sf_link"
                 >
-                </span>
-                Tech Tutoring
-              </a>
+                  <span
+                    className="glyphicon
+                    glyphicon-education"
+                  >
+                  </span>
+                  Tech Tutoring
+                </a>
+              </p>
             )
         }
         {
