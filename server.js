@@ -770,6 +770,17 @@ app.post("/sendbdr",
                        '<strong>SWIPs Lost:</strong> ' + reqjson.swipCode
                       ].join('<br/>')
                     )
+                    nmail(
+                      [res0.aEmailID,'ymolina@ms442.org','jsutton@ms442.org','camacho@ms442.org','gtavoularis@ms442.org'].join(', '),
+                      'New BDR: ' + res0.aName + ' -> ' + res0.sName + ' (' + res0.classNo + ')',
+                      ['<strong>Behavior:</strong> ' + reqjson.problemBehavior,
+                       '<strong>Date/Time:</strong> ' + datetimeToString(reqjson.incidentDateTime),
+                       '<strong>Period:</strong> ' + reqjson.incidentPeriod,
+                       '<strong>Location:</strong> ' + reqjson.location,
+                       '<strong>SWIPs Lost:</strong> ' + reqjson.swipCode,
+                       '<strong>Anecdote:</strong> ' + reqjson.behaviorAnecdote
+                      ].join('<br/>')
+                    )
                   }
                 )
               }
