@@ -479,7 +479,7 @@ app.get('loassess/:loid/:studentUDID/:rating',
             connection.query(
               query,
               [req.params.studentUDID,req.params.loid,req.params.rating],
-              queryCallbacks.default(req,res,req.params.stuUDID)
+              queryCallbacks.default(req,res,req.params.studentUDID)
             )
           }
         ),
