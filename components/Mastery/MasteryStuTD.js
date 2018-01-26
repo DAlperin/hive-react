@@ -45,7 +45,7 @@ class MasteryStuTD extends React.Component {
               </select>
             </div>
           </form>   
-          <span id="" className="badge badgeNY" onMouseEnter={function(){console.log('nyssss')}}>{this.props.ratingData.mcountN}</span>
+          <span id="" className="badge badgeNY" onMouseEnter={function(){console.log(this.props.courseStrLOIDsID)}}>{this.props.ratingData.mcountN}</span>
           <span id="" className="badge badgeA">{this.props.ratingData.mcountA}</span>
           <span id="" className="badge badgeM">{this.props.ratingData.mcountM}</span>
           <span id="" className="badge badgeE">{this.props.ratingData.mcountE}</span>

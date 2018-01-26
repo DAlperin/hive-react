@@ -466,6 +466,27 @@ app.get('/assessments/:courseStr/:assessID',
   )
 )
 
+app.get('assessments/:loid/:studentUDID/:rating',
+  siftUser(
+    {
+      studentResponse:
+        ( empty = function(req,res){res.send('[]')}),
+      teacherResponse:
+        (
+          tR = function(req,res)
+          {
+            var query = "select a.AssessTitle,a.AssessDate from hive1718.assessmentRatings aR left join hive1718.assessments a on a.entryID=aR.assessmentID where aR.studentUDID = 386 and aR.ratings regexp 'm605:4' and a.MRatings != 'y'"
+            connection.query(
+              query,
+              [req.params.studentUDID,req.params.loid,req.params.rating],
+              queryCallbacks.default(req,res,req.params.stuUDID)
+            )
+          }
+        )
+    }
+  )
+)
+
 app.get('/assessments/:courseStr',
   siftUser(
     {
