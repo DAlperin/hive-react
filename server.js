@@ -466,7 +466,7 @@ app.get('/assessments/:courseStr/:assessID',
   )
 )
 
-app.get('assessments/:loid/:studentUDID/:rating',
+app.get('loassess/:loid/:studentUDID/:rating',
   siftUser(
     {
       studentResponse:
