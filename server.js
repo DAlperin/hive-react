@@ -475,7 +475,7 @@ app.get('loassess/:loid/:studentUDID/:rating',
         (
           tR = function(req,res)
           {
-            var query = "select a.AssessTitle,a.AssessDate from hive1718.assessmentRatings aR left join hive1718.assessments a on a.entryID=aR.assessmentID where aR.studentUDID = 386 and aR.ratings regexp 'm605:4' and a.MRatings != 'y'"
+            var query = "select a.AssessTitle,a.AssessDate from hive1718.assessmentRatings aR left join hive1718.assessments a on a.entryID=aR.assessmentID where aR.studentUDID = ? and aR.ratings regexp concat('m',?,':',?,'n') and a.MRatings != 'y'"
             connection.query(
               query,
               [req.params.studentUDID,req.params.loid,req.params.rating],
