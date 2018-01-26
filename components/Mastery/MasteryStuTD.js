@@ -65,7 +65,7 @@ class MasteryStuTD extends React.Component {
                 d.style.top = y + 10 + 'px'
                 d.style.left = x + 10 + 'px'
                 d.style.zIndex = '3000'
-                this.props.gradeLOAssess(loid,sid,1)
+                this.props.getLOAssess(loid,sid,1)
               }.bind(this)
             }
           >
