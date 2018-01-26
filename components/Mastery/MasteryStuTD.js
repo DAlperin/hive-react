@@ -52,6 +52,10 @@ class MasteryStuTD extends React.Component {
               }.bind(this)*/
 
               function showCoords(event) {
+                var loSid = this.props.ratingData.courseStrLOIDsID.split('-')
+                var loid = loSid[1]
+                var sid = loSid[2]
+
                 var x = event.clientX;
                 var y = event.clientY;
                 var d = document.getElementById('gradepopover')
@@ -60,7 +64,9 @@ class MasteryStuTD extends React.Component {
                 d.style.position = 'fixed'
                 d.style.top = y + 10 + 'px'
                 d.style.left = x + 10 + 'px'
-              }
+                d.style.zIndex = '3000'
+                this.props.gradeLOAssess(loid,sid,1)
+              }.bind(this)
             }
           >
             {this.props.ratingData.mcountN}

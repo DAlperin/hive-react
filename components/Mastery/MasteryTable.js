@@ -62,6 +62,7 @@ class MasteryTable extends React.Component {
                   page={this.props.page}
                   changer={this.props.changeMastery}
                   filterAssessments={this.props.filterAssessments}
+                  getLOAssess={this.props.getLOAssess}
                 />
               )
             )

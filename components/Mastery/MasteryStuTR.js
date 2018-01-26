@@ -39,6 +39,7 @@ class MasteryStuTR extends React.Component {
                           ratingData={!!this.props.stuData[this.state.courseLOIDs[id+4*this.props.page]] ? this.props.stuData[this.state.courseLOIDs[id+4*this.props.page]] : {mcountA:0,mcountE:0,mcountM:0,mcountN:0,mRating0:0}}
                           colOffset={id}
                           changer={this.props.changer}
+                          getLOAssess={this.props.getLOAssess}
                       />
                     )
                 } else return null

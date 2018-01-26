@@ -22,7 +22,7 @@ class MasteryContainer extends React.Component {
     super(props);
     //console.log(this.props.mArr)
     this.state = {mArrS:this.props.mArr,parsedMastery: parseMastery(this.props.mArr),
-      page:0,vpage:0,viewOption:'mRatings',assessMArr:null,assessmentFilter:''
+      page:0,vpage:0,viewOption:'mRatings',assessMArr:null,assessmentFilter:'',loAssessHidden:true,loAssessArr:[]
     }
     this.prevPage = this.prevPage.bind(this)
     this.nextPage = this.nextPage.bind(this)
@@ -35,6 +35,7 @@ class MasteryContainer extends React.Component {
     this.filterMasteryClassNo = this.filterMasteryClassNo.bind(this)
     this._getAssessmentGrades = this._getAssessmentGrades.bind(this)
     this.filterAssessments = this.filterAssessments.bind(this)
+    this._getLOAssess = this._getLOAssess.bind(this)
     
   }
   
@@ -93,6 +94,7 @@ class MasteryContainer extends React.Component {
                 filterMasteryStu={this.filterMasteryStu}
                 filterMasteryClassNo={this.filterMasteryClassNo}
                 filterAssessments={this.filterAssessments}
+                getLOAssess={this._getLOAssess}
               />
             </div>
           )
@@ -149,7 +151,7 @@ class MasteryContainer extends React.Component {
     
     return(
       <div className="container">
-        <div id="gradepopover">Hello</div>
+        <div id="gradepopover" hidden={this.state.loAssessHidden}>{this.state.loAssessArr}</div>
         {/*<ul className="pager">
           <li className={"previous" + ((this.state.page == 0) ? " disabled" : "") } onClick={this.prevPage}><a href="#" onClick={function(event){event.preventDefault();}}>Previous</a></li>
           <li className="next" onClick={this.nextPage}><a href="#" onClick={function(event){event.preventDefault();}}>Next</a></li>
@@ -241,6 +243,10 @@ class MasteryContainer extends React.Component {
     courseStrArr = mObj.courseStrArr, 
     rowsByStu = mObj.rowsByStu,
     LOs = mObj.LOs
+  }
+
+  _getLOAssess(LOID,stuUDID,rating){
+    getRequestToArr('/loassess/' + LOID + '/' + stuUDID + '/' + rating, function(arr){this.setState({loAssessArr:arr,loAssessHidden:false})}.bind(this))
   }
 
   _getAssessmentGrades(courseStr,assessID){
