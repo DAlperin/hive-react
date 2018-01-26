@@ -28,6 +28,7 @@ class MasteryTable extends React.Component {
     
     return( 
       <table id="" className="table table-bordered">
+        <div id="gradepopover">Hello</div>
         <tbody>
           {
             (

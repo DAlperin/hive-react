@@ -45,7 +45,26 @@ class MasteryStuTD extends React.Component {
               </select>
             </div>
           </form>   
-          <span id="" className="badge badgeNY" onMouseEnter={function(){console.log(this.props.ratingData.courseStrLOIDsID)}.bind(this)}>{this.props.ratingData.mcountN}</span>
+          <span id="" className="badge badgeNY"
+            onMouseEnter={
+              /*function(){
+                console.log(this.props.ratingData.courseStrLOIDsID)
+              }.bind(this)*/
+
+              function showCoords(event) {
+                var x = event.clientX;
+                var y = event.clientY;
+                var d = document.getElementById('gradepopover')
+                d.style.background = 'white'
+                d.style.border = '2px solid black'
+                d.style.position = 'fixed'
+                d.style.top = y + 10 + 'px'
+                d.style.left = x + 10 + 'px'
+              }
+            }
+          >
+            {this.props.ratingData.mcountN}
+          </span>
           <span id="" className="badge badgeA">{this.props.ratingData.mcountA}</span>
           <span id="" className="badge badgeM">{this.props.ratingData.mcountM}</span>
           <span id="" className="badge badgeE">{this.props.ratingData.mcountE}</span>
