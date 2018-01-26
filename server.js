@@ -482,7 +482,11 @@ app.get('loassess/:loid/:studentUDID/:rating',
               queryCallbacks.default(req,res,req.params.stuUDID)
             )
           }
-        )
+        ),
+      adminResponse:
+        tR,
+      empty:
+        empty
     }
   )
 )
