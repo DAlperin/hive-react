@@ -153,7 +153,7 @@ class MasteryContainer extends React.Component {
     
     return(
       <div className="container">
-        <div id="gradepopover" hidden={this.state.loAssessHidden}>{this.state.loAssessArr}</div>
+        <div id="gradepopover" hidden={this.state.loAssessHidden}>{JSON.stringify(this.state.loAssessArr)}</div>
         {/*<ul className="pager">
           <li className={"previous" + ((this.state.page == 0) ? " disabled" : "") } onClick={this.prevPage}><a href="#" onClick={function(event){event.preventDefault();}}>Previous</a></li>
           <li className="next" onClick={this.nextPage}><a href="#" onClick={function(event){event.preventDefault();}}>Next</a></li>
