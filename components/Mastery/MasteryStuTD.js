@@ -65,15 +65,88 @@ class MasteryStuTD extends React.Component {
                 d.style.top = y + 10 + 'px'
                 d.style.left = x + 10 + 'px'
                 d.style.zIndex = '3000'
+                d.style.padding = '5px'
                 this.props.getLOAssess(loid,sid,1)
               }.bind(this)
             }
           >
             {this.props.ratingData.mcountN}
           </span>
-          <span id="" className="badge badgeA">{this.props.ratingData.mcountA}</span>
-          <span id="" className="badge badgeM">{this.props.ratingData.mcountM}</span>
-          <span id="" className="badge badgeE">{this.props.ratingData.mcountE}</span>
+          <span id="" className="badge badgeA"
+            onMouseEnter={
+              /*function(){
+                console.log(this.props.ratingData.courseStrLOIDsID)
+              }.bind(this)*/
+
+              function showCoords(event) {
+                var loSid = this.props.ratingData.courseStrLOIDsID.split('-')
+                var loid = loSid[1]
+                var sid = loSid[2]
+
+                var x = event.clientX;
+                var y = event.clientY;
+                var d = document.getElementById('gradepopover')
+                d.style.background = 'white'
+                d.style.border = '2px solid black'
+                d.style.position = 'fixed'
+                d.style.top = y + 10 + 'px'
+                d.style.left = x + 10 + 'px'
+                d.style.zIndex = '3000'
+                d.style.padding = '5px'
+                this.props.getLOAssess(loid,sid,2)
+              }.bind(this)
+            }
+          >{this.props.ratingData.mcountA}</span>
+          <span id="" className="badge badgeM"
+            onMouseEnter={
+              /*function(){
+                console.log(this.props.ratingData.courseStrLOIDsID)
+              }.bind(this)*/
+
+              function showCoords(event) {
+                var loSid = this.props.ratingData.courseStrLOIDsID.split('-')
+                var loid = loSid[1]
+                var sid = loSid[2]
+
+                var x = event.clientX;
+                var y = event.clientY;
+                var d = document.getElementById('gradepopover')
+                d.style.background = 'white'
+                d.style.border = '2px solid black'
+                d.style.position = 'fixed'
+                d.style.top = y + 10 + 'px'
+                d.style.left = x + 10 + 'px'
+                d.style.zIndex = '3000'
+                d.style.padding = '5px'
+                this.props.getLOAssess(loid,sid,3)
+              }.bind(this)
+            }
+          >{this.props.ratingData.mcountM}</span>
+          <span id="" className="badge badgeE"
+            onMouseEnter={
+              /*function(){
+                console.log(this.props.ratingData.courseStrLOIDsID)
+              }.bind(this)*/
+
+              function showCoords(event) {
+                var loSid = this.props.ratingData.courseStrLOIDsID.split('-')
+                var loid = loSid[1]
+                var sid = loSid[2]
+
+                var x = event.clientX;
+                var y = event.clientY;
+                var d = document.getElementById('gradepopover')
+                d.style.background = 'white'
+                d.style.border = '2px solid black'
+                d.style.position = 'fixed'
+                d.style.top = y + 10 + 'px'
+                d.style.left = x + 10 + 'px'
+                d.style.zIndex = '3000'
+                d.style.padding = '5px'
+                this.props.getLOAssess(loid,sid,4)
+              }.bind(this)
+            }
+          >{this.props.ratingData.mcountE}</span>
         </td>
       )
     }

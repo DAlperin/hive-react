@@ -154,7 +154,7 @@ class MasteryContainer extends React.Component {
     return(
       <div className="container">
         <div id="gradepopover" hidden={this.state.loAssessHidden}>
-          {this.state.loAssessArr.map((item)=>(<p><strong>item.AssessTitle</strong> {item.AssessDate.substring(5,10) + '-' + item.AssessDate.substring(0,5)}</p>))}
+          {this.state.loAssessArr.map((item)=>(<p key={'loassess' + item}><strong>{item.AssessTitle}</strong> {item.AssessDate.substring(5,10) + '-' + item.AssessDate.substring(0,4)}</p>))}
         </div>
         {/*<ul className="pager">
           <li className={"previous" + ((this.state.page == 0) ? " disabled" : "") } onClick={this.prevPage}><a href="#" onClick={function(event){event.preventDefault();}}>Previous</a></li>
