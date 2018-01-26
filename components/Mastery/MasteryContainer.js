@@ -47,7 +47,9 @@ class MasteryContainer extends React.Component {
     viewOption:'mRatings',
     assessMArr: null,
     assessmentsArr: null,
-    assessmentFilter: ''
+    assessmentFilter: '',
+    loAssessHidden:true,
+    loAssessArr:[]
   });
 }
   
